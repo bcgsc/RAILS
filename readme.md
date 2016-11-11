@@ -1,4 +1,4 @@
-RAILSi v1.1 and Cobbler v0.2 Rene L. Warren, 2014-2016
+RAILS v1.1 and Cobbler v0.2 Rene L. Warren, 2014-2016
 email: rwarren at bcgsc.ca
 
 Name
