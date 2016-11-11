@@ -1,21 +1,21 @@
 ---
-  title: 'RAILS and Cobbler: Scaffolding and automated finishing of draft genomes using long sequences'
-  tags:
-    - de novo assembly
-    - LINKS
-    - RAILS
-    - Scaffolding
-    - Automated finishing
-  authors:
-   - name: Rene L Warren
-     orcid: 0000-0002-9890-2293 
-     affiliation: 1
-  affiliations:
-   - name: BC Cancer Agency, Genome Sciences Centre, Vancouver, BC, Canada
-     index: 1
-  date: 10 November 2016
-  bibliography: paper.bib
-  ---
+title: 'RAILS and Cobbler: Scaffolding and automated finishing of draft genomes using long DNA sequences'
+tags:
+ - de novo assembly
+ - LINKS
+ - RAILS
+ - Scaffolding
+ - Automated finishing
+authors:
+ - name: Rene L Warren
+   orcid: 0000-0002-9890-2293 
+   affiliation: 1
+affiliations:
+ - name: BC Cancer Agency, Genome Sciences Centre, Vancouver, BC, Canada
+index: 1
+date: 10 November 2016
+bibliography: paper.bib
+---
 
   # Summary
 
