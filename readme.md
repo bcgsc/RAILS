@@ -130,7 +130,7 @@ Warren RL, Sutton GG, Jones SJM, Holt RA.  2007.  Assembling millions of short D
 On a human draft assembly, cobbler patched over 65% of the gaps using 1, 2.5, 5, 15 kb long DNA sequences simulated from the human genome reference. The Pearson correlation between the predicted gap sizes and the size of patched gaps is R=0.8150
 
 
-**Table 1.** Patching gaps with Cobbler using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
+**Table 1.** Patching gaps in a genome assembly draft with Cobbler, using simulated 1, 2.5, 5 and 15 kbp simulated long sequences from human genome reference GRCh38.
 
 Metric | Value
 ---- | ----
@@ -161,10 +161,10 @@ The scaffold N50 length increased from 5.6 to 7.3 Mbp, a 30% increase in N50 len
 
 **Table 3.** Assembly statistics on human genome scaffolding and finishing post cobbler and RAILS.
 
-n:500 |	n:N50 |	n:NG50 |	NG50 |	N50 |	E-size |	max |	sum |	name
+n:500 |	n:N50 |	n:NG50 |	NG50 (bp) |	N50 (bp)|	E-size (bp) |	max (bp) |	sum (bp) |	name
 ------ | ----- | ----- | --------- | --------- | --------- | ------- | ------- | ---------
-65,905 |	145 |	164 |	5,144,025 |	5,597,244 |	7,101,538 |	26.41e6 |	2.794e9 |	baseline
-65,905 |	145 |	161 |	5,312,196 |	5,658,133 |	7,175,808 |	26.66e6 |	2.827e9 |	cobbler
+65,905 |	145 |	164 |	5,144,025 |	5,597,244 |	7,101,538 |	26.41e6 |	2.794e9 |	Baseline
+65,905 |	145 |	161 |	5,312,196 |	5,658,133 |	7,175,808 |	26.66e6 |	2.827e9 |	Cobbler
 64,210 |	113 |	125 |	6,935,685 |	7,266,542 |	9,007,414 |	32.14e6 |	2.836e9 |	RAILS
 
 
