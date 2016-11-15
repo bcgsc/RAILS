@@ -131,6 +131,7 @@ On a human draft assembly, cobbler patched over 65% of the gaps using 1, 2.5, 5,
 
 
 **Table 1.** Patching gaps with Cobbler using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
+
 Metric | Value
 ---- | ----
 Total gaps | 148,091
@@ -142,10 +143,10 @@ Total bases added | 32,801,755
 Largest gap resolved (bp) | 13,662
 Shortest gap resolved (bp) | 1 
 
-
 RAILS was used to further contiguate the human baseline assembly draft and automatically close gaps within in:
 
 **Table 2.** RAILS scaffolding and gap-filling summary on a human assembly baseline, using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
+
 Metric | Value
 ---- | ----
 Number of merges induced | 6,029
@@ -159,6 +160,7 @@ Shortest gap resolved (bp) | 1
 The scaffold N50 length increased from 5.6 to 7.3 Mbp, a 30% increase in N50 length.
 
 **Table 3.** Assembly statistics on human genome scaffolding and finishing post cobbler and RAILS.
+
 n:500 |	n:N50 |	n:NG50 |	NG50 |	N50 |	E-size |	max |	sum |	name
 ------ | ----- | ----- | --------- | --------- | --------- | ------- | ------- | ---------
 65,905 |	145 |	164 |	5,144,025 |	5,597,244 |	7,101,538 |	26.41e6 |	2.794e9 |	baseline
@@ -184,8 +186,3 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-
-First Header | Second Header
------------- | -------------
-Content from cell 1 | Content from cell 2
-Content in the first column | Content in the second column
