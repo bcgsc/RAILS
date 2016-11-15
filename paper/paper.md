@@ -37,12 +37,12 @@ Total bases added | 32,801,755
 Largest gap resolved (bp) | 13,662
 Shortest gap resolved (bp) | 1
 
-**Table 2.** Assembly statistics on human genome scaffolding and finishing post Cobbler and RAILS.
+**Table 2.** Assembly statistics on human genome scaffolding and finishing post Cobbler and RAILS (reporting sequences 500 bp and larger).
 
-n:500 | n:N50 | n:NG50 |        NG50 (bp) |     N50 (bp)|       max (bp) |      sum (bp) |      name
------- | ----- | ----- | --------- | --------- | --------- |  ------- | ---------
-65,905 |        145 |   164 |   5,144,025 |     5,597,244 |       26.41e6 |       2.794e9 |       Baseline
-65,905 |        145 |   161 |   5,312,196 |     5,658,133 |       26.66e6 |       2.827e9 |       Cobbler
-64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e6 |       2.836e9 |       RAILS
+Stage | n:500 | n:N50 | n:NG50 |        NG50 (bp) |     N50 (bp)|       max (bp) |      sum (bp) 
+--------- | ------ | ----- | ----- | --------- | --------- | --------- |  ------- 
+Baseline | 65,905 |        145 |   164 |   5,144,025 |     5,597,244 |       26.41e6 |       2.794e9 
+Cobbler | 65,905 |        145 |   161 |   5,312,196 |     5,658,133 |       26.66e6 |       2.827e9 
+RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e6 |       2.836e9 
 
 # References

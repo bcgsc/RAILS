@@ -159,13 +159,14 @@ Shortest gap resolved (bp) | 1
 6,029 merges resulted from RAILS scaffolding of the baseline human assembly draft (1,695 >= 500bp)
 The scaffold N50 length increased from 5.6 to 7.3 Mbp, a 30% increase in N50 length.
 
-**Table 3.** Assembly statistics on human genome scaffolding and finishing post cobbler and RAILS.
 
-n:500 |	n:N50 |	n:NG50 |	NG50 (bp) |	N50 (bp)|	E-size (bp) |	max (bp) |	sum (bp) |	name
------- | ----- | ----- | --------- | --------- | --------- | ------- | ------- | ---------
-65,905 |	145 |	164 |	5,144,025 |	5,597,244 |	7,101,538 |	26.41e6 |	2.794e9 |	Baseline
-65,905 |	145 |	161 |	5,312,196 |	5,658,133 |	7,175,808 |	26.66e6 |	2.827e9 |	Cobbler
-64,210 |	113 |	125 |	6,935,685 |	7,266,542 |	9,007,414 |	32.14e6 |	2.836e9 |	RAILS
+**Table 3.** Assembly statistics on human genome scaffolding and finishing post Cobbler and RAILS (reporting sequences 500 bp and larger).
+
+Stage | n:500 | n:N50 | n:NG50 |        NG50 (bp) |     N50 (bp)|       max (bp) |      sum (bp)
+--------- | ------ | ----- | ----- | --------- | --------- | --------- |  -------
+Baseline | 65,905 |        145 |   164 |   5,144,025 |     5,597,244 |       26.41e6 |       2.794e9
+Cobbler | 65,905 |        145 |   161 |   5,312,196 |     5,658,133 |       26.66e6 |       2.827e9
+RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e6 |       2.836e9
 
 
 ### License Preamble
