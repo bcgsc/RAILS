@@ -27,7 +27,7 @@ bibliography: paper.bib
 **Table 1.** Patching gaps in a genome assembly draft with Cobbler, using simulated 1, 2.5, 5 and 15 kbp simulated long sequences from human genome reference GRCh38.
 
 Metric | Value
----- | ----
+---- | ----:
 Total gaps | 148,091
 Number of gaps patched | 95,523
 Proportion of gaps patched | 65.1%
@@ -40,7 +40,7 @@ Shortest gap resolved (bp) | 1
 **Table 2.** Assembly statistics on human genome scaffolding and finishing post Cobbler and RAILS (reporting sequences 500 bp and larger).
 
 Stage | n:500 | n:N50 | n:NG50 |        NG50 (bp) |     N50 (bp)|       max (bp) |      sum (bp) 
---------- | ------ | ----- | ----- | --------- | --------- | --------- |  ------- 
+--------- | ------: | -----: | -----: | ---------: | ---------: | ---------: |  -------: 
 Baseline | 65,905 |        145 |   164 |   5,144,025 |     5,597,244 |       26.41e6 |       2.794e9 
 Cobbler | 65,905 |        145 |   161 |   5,312,196 |     5,658,133 |       26.66e6 |       2.827e9 
 RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e6 |       2.836e9 

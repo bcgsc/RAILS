@@ -133,7 +133,7 @@ On a human draft assembly, cobbler patched over 65% of the gaps using 1, 2.5, 5,
 **Table 1.** Patching gaps in a genome assembly draft with Cobbler, using simulated 1, 2.5, 5 and 15 kbp simulated long sequences from human genome reference GRCh38.
 
 Metric | Value
----- | ----
+---- | ----:
 Total gaps | 148,091
 Number of gaps patched | 95,523
 Proportion of gaps patched | 65.1%
@@ -148,7 +148,7 @@ RAILS was used to further contiguate the human baseline assembly draft and autom
 **Table 2.** RAILS scaffolding and gap-filling summary on a human assembly baseline, using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
 
 Metric | Value
----- | ----
+---- | ----:
 Number of merges induced | 6,029
 Average closed gap length (bp) | 1,136.71
 Closed gap length st.dev +/- | 2,511.69
@@ -163,7 +163,7 @@ The scaffold N50 length increased from 5.6 to 7.3 Mbp, a 30% increase in N50 len
 **Table 3.** Assembly statistics on human genome scaffolding and finishing post Cobbler and RAILS (reporting sequences 500 bp and larger).
 
 Stage | n:500 | n:N50 | n:NG50 |        NG50 (bp) |     N50 (bp)|       max (bp) |      sum (bp)
---------- | ------ | ----- | ----- | --------- | --------- | --------- |  -------
+--------- | ------: | -----: | -----: | ---------: | ---------: | ---------: |  -------:
 Baseline | 65,905 |        145 |   164 |   5,144,025 |     5,597,244 |       26.41e6 |       2.794e9
 Cobbler | 65,905 |        145 |   161 |   5,312,196 |     5,658,133 |       26.66e6 |       2.827e9
 RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e6 |       2.836e9
