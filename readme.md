@@ -1,4 +1,4 @@
-# RAILS v1.1 and Cobbler v0.2 Rene L. Warren, 2014-2016
+## RAILS v1.1 and Cobbler v0.2 Rene L. Warren, 2014-2016
 email: rwarren at bcgsc.ca
 
 ### Name
@@ -51,11 +51,11 @@ Make sure you have installed bwa (Version: 0.7.15-r1140) and that is is in your 
 Go to ./test
 (cd test)
 
-1. SARS
+1. SARS:
 execute runme.sh
 (./runme.sh)
 
-2. Human
+2. Human:
 execute runmeHuman.sh (will take a while to run)
 (./runmeHuman.sh)
 
@@ -130,7 +130,9 @@ Warren RL, Sutton GG, Jones SJM, Holt RA.  2007.  Assembling millions of short D
 On a human draft assembly, cobbler patched over 65% of the gaps using 1, 2.5, 5, 15 kb long DNA sequences simulated from the human genome reference. The Pearson correlation between the predicted gap sizes and the size of patched gaps is R=0.8150
 
 
-*Table 1.* Patching gaps with Cobbler using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
+**Table 1.** Patching gaps with Cobbler using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
+Metric | Value
+---- | ----
 Total gaps | 148,091
 Number of gaps patched | 95,523
 Proportion of gaps patched | 65.1%
@@ -143,7 +145,9 @@ Shortest gap resolved (bp) | 1
 
 RAILS was used to further contiguate the human baseline assembly draft and automatically close gaps within in:
 
-*Table 2.* RAILS scaffolding and gap-filling summary on a human assembly baseline, using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
+**Table 2.** RAILS scaffolding and gap-filling summary on a human assembly baseline, using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
+Metric | Value
+---- | ----
 Number of merges induced | 6,029
 Average closed gap length (bp) | 1,136.71
 Closed gap length st.dev +/- | 2,511.69
@@ -154,12 +158,12 @@ Shortest gap resolved (bp) | 1
 6,029 merges resulted from RAILS scaffolding of the baseline human assembly draft (1,695 >= 500bp)
 The scaffold N50 length increased from 5.6 to 7.3 Mbp, a 30% increase in N50 length.
 
-*Table 3.* Assembly statistics on human genome scaffolding and finishing post cobbler and RAILS.
-n:500|	n:N50|	n:NG50|	NG50|	N50|	E-size|	max|	sum|	name
-------|-----|-----|---------|---------|---------|-------|-------|---------
-65,905|	145|	164|	5,144,025|	5,597,244|	7,101,538|	26.41e6|	2.794e9|	baseline
-65,905|	145|	161|	5,312,196|	5,658,133|	7,175,808|	26.66e6|	2.827e9|	cobbler
-64,210|	113|	125|	6,935,685|	7,266,542|	9,007,414|	32.14e6|	2.836e9|	RAILS
+**Table 3.** Assembly statistics on human genome scaffolding and finishing post cobbler and RAILS.
+n:500 |	n:N50 |	n:NG50 |	NG50 |	N50 |	E-size |	max |	sum |	name
+------ | ----- | ----- | --------- | --------- | --------- | ------- | ------- | ---------
+65,905 |	145 |	164 |	5,144,025 |	5,597,244 |	7,101,538 |	26.41e6 |	2.794e9 |	baseline
+65,905 |	145 |	161 |	5,312,196 |	5,658,133 |	7,175,808 |	26.66e6 |	2.827e9 |	cobbler
+64,210 |	113 |	125 |	6,935,685 |	7,266,542 |	9,007,414 |	32.14e6 |	2.836e9 |	RAILS
 
 
 ### License Preamble
