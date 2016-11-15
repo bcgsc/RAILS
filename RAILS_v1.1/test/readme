@@ -1,0 +1,9 @@
+Quick test to assess installation
+
+Execute "runme.sh" at the unix prompt
+eg. ./runme.sh
+
+It will run cobbler + RAILS, using simulated reads to first patch gaps in a SARS assembly draft sequence (cobbler) and scaffold+patch gaps (RAILS) using those same reads. 
+
+./runRAILS.sh SARSassembly.fa SARSreads.fa 90 0.95
+
