@@ -1,11 +1,11 @@
 ---
 title: 'RAILS and Cobbler: Scaffolding and automated finishing of draft genomes using long DNA sequences'
 tags:
- - de novo assembly
+ - De novo sequence assembly
+ - Genome scaffolding
+ - Automated genome finishing
  - LINKS
  - RAILS
- - Scaffolding
- - Automated finishing
 authors:
  - name: Rene L Warren
    orcid: 0000-0002-9890-2293 
