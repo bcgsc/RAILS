@@ -61,7 +61,7 @@ execute runmeHuman.sh (will take a while to run)
 
 
 ### Usage
-
+<code>
 ./runRAILS.sh
 Usage: runRAILS.sh <FASTA assembly .fa> <FASTA long sequences .fa> <anchoring sequence length eg. 250> <min sequence identity 0.95>
 
@@ -95,7 +95,7 @@ Usage: ./RAILS [v1.1]
 -t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)
 -b  Base name for your output files (optional)
 -v  Runs in verbose mode (-v 1 = yes, default = no, optional)
-
+</code>
 
 ### How it works
 
