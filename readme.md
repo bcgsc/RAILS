@@ -59,6 +59,18 @@ execute runme.sh
 execute runmeHuman.sh (will take a while to run)
 (./runmeHuman.sh)
 
+###Citing RAILS/Cobbler
+------------
+
+Thank you for using, developing and promoting this free software.
+If you use RAILS or Cobbler for you research, please cite:
+
+<pre>
+Warren RL. 2016. RAILS and Cobbler: Scaffolding and automated finishing
+of draft genomes using long DNA sequences. The Journal of Open Source
+Software. doi: 10.21105/joss.00116
+</pre>
+
 
 ### Usage
 <pre>
