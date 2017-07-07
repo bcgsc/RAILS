@@ -1,13 +1,16 @@
-## RAILS v1.2 and Cobbler v0.3 Rene L. Warren, 2014-2017
-email: rwarren at bcgsc.ca
+# RAILS v1.2 and Cobbler v0.3
+## Rene L. Warren, 2014-2017
+## email: rwarren at bcgsc.ca
 
 ### Name
+-------------
 
 RAILS: Radial Assembly Improvement by Long Sequence Scaffolding
 Cobbler: Gap-filling with long sequences
 
 
 ### Description
+-------------
 
 RAILS and Cobbler are genomics application for scaffolding and automated finishing of genome assemblies with long DNA sequences.
 They can be used to scaffold & finish high-quality draft genome assemblies with any long, preferably high-quality, sequences such as scaftigs/contigs from another genome draft. 
@@ -22,32 +25,40 @@ RAILS is an all-in-one scaffolder and gap-filler. Its process is similar to that
 You can test the software by executing "runme.sh" in the test folder. A simulated SARS genome assembly is provided to test the software. 
 
 ### Implementation and requirements
+-------------
 
 RAILS and Cobbler are implemented in PERL and run on any OS where PERL is installed.
 
 
 ### Community guidelines:
+-------------
 
 I encourage the community to contribute to the development of this software, by providing suggestions for improving the code and/or directly contributing to the open source code for these tools. Users and developers may report software issues, bug fix requests, comments, etc, at <https://github.com/warrenlr/RAILS>
 
 
 ### Install
+-------------
 
 Download the tar ball, gunzip and extract the files on your system using:
 
+<pre>
 gunzip rails_v1-2.tar.gz
 tar -xvf rails_v1-2.tar
+</pre>
 
 Alternatively, individual tools are available within the github repository
 
 
 ### Dependencies
+-------------
 
 Make sure you have installed bwa (Version: 0.7.15-r1140) and that is is in your path.
 
 
 ### Test data
+-------------
 
+<pre>
 Go to ./test
 (cd test)
 
@@ -58,10 +69,26 @@ execute runme.sh
 2. Human:
 execute runmeHuman.sh (will take a while to run)
 (./runmeHuman.sh)
+</pre>
+
+
+### Citing RAILS/Cobbler
+-------------
+
+Thank you for using, developing and promoting this free software.
+If you use RAILS or Cobbler for you research, please cite:
+
+<pre>
+Warren RL. 2016. RAILS and Cobbler: Scaffolding and automated finishing
+of draft genomes using long DNA sequences. The Journal of Open Source
+Software. doi: 10.21105/joss.00116
+</pre>
 
 
 ### Usage
+-------------
 
+<pre>
 ./runRAILS.sh
 Usage: runRAILS.sh <FASTA assembly .fa> <FASTA long sequences .fa> <anchoring sequence length eg. 250> <min sequence identity 0.95>
 
@@ -95,8 +122,10 @@ Usage: ./RAILS [v1.2]
 -t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)
 -b  Base name for your output files (optional)
 -v  Runs in verbose mode (-v 1 = yes, default = no, optional)
+</pre>
 
 ### How it works
+-------------
 
 The pipeline is detailed in the provided script runRAILS.sh. PLEASE ensure the draft assembly is FASTA-formatted with one sequence per line (NO LINE BREAKS)
 
@@ -116,15 +145,17 @@ Scaffolding in RAILS is done using the LINKS scaffolder code (Warren et al. 2015
 Output: For both Cobbler and RAILS, a summary of the gaps closed and their lengths is provided (.tsv) as a text file.
 A fasta file (.fa) of the finished and/or scaffolded draft is generated for both along with a log file reporting basic success statistics.
 
-
+<pre>
 Boetzer M, Pirovano W. 2014. SSPACE-LongRead: scaffolding bacterial draft genomes using long read sequence information. BMC Bioinformatics.15:211. DOI: 10.1186/1471-2105-15-211
 
 Warren RL, Yang C, Vandervalk BP, Behsaz B, Lagman A, Jones SJ, Birol I. 2015. LINKS: Scalable, alignment-free scaffolding of draft genomes with long reads. GigaScience 4:35. DOI: 10.1186/s13742-015-0076-3
 
 Warren RL, Sutton GG, Jones SJM, Holt RA.  2007.  Assembling millions of short DNA sequences using SSAKE.  Bioinformatics. 23(4):500-501. DOI: 10.1093/bioinformatics/btl629
+</pre>
 
 
 ### Runs on the human genome
+-------------
 
 On a human draft assembly, cobbler patched over 65% of the gaps using 1, 2.5, 5, 15 kb long DNA sequences simulated from the human genome reference. The Pearson correlation between the predicted gap sizes and the size of patched gaps is R=0.8150
 
@@ -132,7 +163,7 @@ On a human draft assembly, cobbler patched over 65% of the gaps using 1, 2.5, 5,
 **Table 1.** Patching gaps with Cobbler (v0.2) using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
 
 Metric | Value
----- | ----
+---- | ----:
 Total gaps | 148,091
 Number of gaps patched | 95,523
 Proportion of gaps patched | 65.1%
@@ -147,7 +178,7 @@ RAILS (v1.1) was used to further contiguate the human baseline assembly draft an
 **Table 2.** RAILS scaffolding and gap-filling summary on a human assembly baseline, using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
 
 Metric | Value
----- | ----
+---- | ----:
 Number of merges induced | 6,029
 Average closed gap length (bp) | 1,136.71
 Closed gap length st.dev +/- | 2,511.69
@@ -158,16 +189,18 @@ Shortest gap resolved (bp) | 1
 6,029 merges resulted from RAILS scaffolding of the baseline human assembly draft (1,695 >= 500bp)
 The scaffold N50 length increased from 5.6 to 7.3 Mbp, a 30% increase in N50 length.
 
-**Table 3.** Assembly statistics on human genome scaffolding and finishing post cobbler and RAILS.
 
-n:500 |	n:N50 |	n:NG50 |	NG50 |	N50 |	E-size |	max |	sum |	name
------- | ----- | ----- | --------- | --------- | --------- | ------- | ------- | ---------
-65,905 |	145 |	164 |	5,144,025 |	5,597,244 |	7,101,538 |	26.41e6 |	2.794e9 |	baseline
-65,905 |	145 |	161 |	5,312,196 |	5,658,133 |	7,175,808 |	26.66e6 |	2.827e9 |	cobbler
-64,210 |	113 |	125 |	6,935,685 |	7,266,542 |	9,007,414 |	32.14e6 |	2.836e9 |	RAILS
+**Table 3.** Assembly statistics on human genome scaffolding and finishing post Cobbler and RAILS (reporting sequences 500 bp and larger).
+
+Stage | n:500 | n:N50 | n:NG50 |        NG50 (bp) |     N50 (bp)|       max (bp) |      sum (bp)
+--------- | ------: | -----: | -----: | ---------: | ---------: | ---------: |  -------:
+Baseline | 65,905 |        145 |   164 |   5,144,025 |     5,597,244 |       26.41e6 |       2.794e9
+Cobbler | 65,905 |        145 |   161 |   5,312,196 |     5,658,133 |       26.66e6 |       2.827e9
+RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e6 |       2.836e9
 
 
 ### License Preamble
+-------------
 
 RAILS and Cobbler Copyright (c) 2014-2017 British Columbia Cancer Agency Branch.  All rights reserved.
 
