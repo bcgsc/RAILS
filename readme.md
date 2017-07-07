@@ -145,12 +145,13 @@ Scaffolding in RAILS is done using the LINKS scaffolder code (Warren et al. 2015
 Output: For both Cobbler and RAILS, a summary of the gaps closed and their lengths is provided (.tsv) as a text file.
 A fasta file (.fa) of the finished and/or scaffolded draft is generated for both along with a log file reporting basic success statistics.
 
-
+<pre>
 Boetzer M, Pirovano W. 2014. SSPACE-LongRead: scaffolding bacterial draft genomes using long read sequence information. BMC Bioinformatics.15:211. DOI: 10.1186/1471-2105-15-211
 
 Warren RL, Yang C, Vandervalk BP, Behsaz B, Lagman A, Jones SJ, Birol I. 2015. LINKS: Scalable, alignment-free scaffolding of draft genomes with long reads. GigaScience 4:35. DOI: 10.1186/s13742-015-0076-3
 
 Warren RL, Sutton GG, Jones SJM, Holt RA.  2007.  Assembling millions of short DNA sequences using SSAKE.  Bioinformatics. 23(4):500-501. DOI: 10.1093/bioinformatics/btl629
+</pre>
 
 
 ### Runs on the human genome
