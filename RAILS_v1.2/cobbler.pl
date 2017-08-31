@@ -25,7 +25,7 @@ use Getopt::Std;
 use Net::SMTP;
 use vars qw($opt_f $opt_s $opt_d $opt_i $opt_v $opt_b $opt_t $opt_q);
 getopts('f:s:d:v:b:t:i:q:');
-my ($base_name,$frag_dist,$seqid,$verbose)=("",1000,0.9,0);
+my ($base_name,$frag_dist,$seqid,$verbose)=("",250,0.9,0);
 
 my $version = "[v0.3]";
 my $dev = "rwarren\@bcgsc.ca";

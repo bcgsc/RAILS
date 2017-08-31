@@ -6,6 +6,7 @@
 -------------
 
 RAILS: Radial Assembly Improvement by Long Sequence Scaffolding
+
 Cobbler: Gap-filling with long sequences
 
 
@@ -89,7 +90,7 @@ Software. doi: 10.21105/joss.00116
 -------------
 
 <pre>
-./runRAILS.sh
+./runRAILS.sh or runRAILS_lowcontiguityseqs.sh
 Usage: runRAILS.sh <FASTA assembly .fa> <FASTA long sequences .fa> <anchoring sequence length eg. 250> <min sequence identity 0.95>
 
 this pipeline will:
@@ -107,7 +108,7 @@ Usage: ./cobbler.pl [v0.3]
 -f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)
 -q  Long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)
 -s  BAM file (use v0.2 for reading SAM files)
--d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d 1000, optional)
+-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d 250, optional)
 -i  Minimum sequence identity, default -i 0.9, optional
 -t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)
 -b  Base name for your output files (optional)
@@ -117,7 +118,7 @@ Usage: ./RAILS [v1.2]
 -f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)
 -q  Long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)
 -s  BAM file (use v1.1 for reading SAM files)
--d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d 1000, optional)
+-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d 250, optional)
 -i  Minimum sequence identity, default -i 0.9, optional
 -t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)
 -b  Base name for your output files (optional)
@@ -127,7 +128,7 @@ Usage: ./RAILS [v1.2]
 ### How it works
 -------------
 
-The pipeline is detailed in the provided script runRAILS.sh. PLEASE ensure the draft assembly is FASTA-formatted with one sequence per line (NO LINE BREAKS)
+The pipeline is detailed in the provided script runRAILS.sh and runRAILS_lowcontiguityseqs.sh. PLEASE ensure the draft assembly is FASTA-formatted with one sequence per line (NO LINE BREAKS)
 
 Cobbler's process:
 
@@ -135,6 +136,10 @@ The assembly draft sequence supplied to Cobbler is first broken up at the ambigu
 In the runRAILS.sh, these scaftigs are renamed, tracking their scaffold of origin (renumbered incrementally) and their position within it (also numbered incrementally).
 A bwa index is created and the long sequence file, also re-numbered, is aligned to the scaftigs.
 Cobbler is supplied with the alignment file (-s sam file) and the long reads files (-q option), specifying the minimum length of anchoring bases (-d) aligning at the edge of scaftigs and the minimum sequence identity of the alignment (-i). When 1 or more long sequences align unambiguously to the 3'end of a scaftig and the 5'end of its neighbour, the gap is patched with the sequence of that long sequence. If no long sequences are suitable, or the -d and -i conditions are not met, the original Ns are placed back between those scaftigs.
+
+runRAILS.sh uses scaftigs for patching gaps, whereas runRAILS_lowcontiguityseqs.sh uses scaffold sequences (not broken at Ns) instead.
+If you intend to use an assembly with low contiguity for patching gaps, one that has few and short gaps (stretches of Ns), you may use runRAILS_lowcontiguityseqs.sh.  This is because, depending on the -d parameter set, insufficient anchoring bases may align to patch a gap.
+
 
 RAILS process:
 
