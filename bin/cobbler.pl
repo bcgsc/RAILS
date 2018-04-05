@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #AUTHOR
 #   Rene Warren
@@ -18,16 +18,16 @@
 #  
 
 #LICENSE
-#   LINKS, RAILS and Cobbler Copyright (c) 2014-2017 Canada's Michael Smith Genome Science Centre.  All rights reserved.
+#   LINKS, RAILS and Cobbler Copyright (c) 2014-2018 Canada's Michael Smith Genome Science Centre.  All rights reserved.
 
 use strict;
 use Getopt::Std;
 use Net::SMTP;
 use vars qw($opt_f $opt_s $opt_d $opt_i $opt_v $opt_b $opt_t $opt_q);
 getopts('f:s:d:v:b:t:i:q:');
-my ($base_name,$frag_dist,$seqid,$verbose)=("",250,0.9,0);
+my ($base_name,$anchor,$seqid,$verbose)=("",1000,0.9,0);
 
-my $version = "[v0.3]";
+my $version = "[v0.4]";
 my $dev = "rwarren\@bcgsc.ca";
 my $SAMPATH = "/gsc/btl/linuxbrew/bin/samtools";
 
@@ -36,19 +36,20 @@ my $SAMPATH = "/gsc/btl/linuxbrew/bin/samtools";
 if(! $opt_f || ! $opt_s || ! $opt_q){
    print "Usage: $0 $version\n";
    print "-f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)\n"; 
-   print "-q  Long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)\n";
-   print "-s  BAM file (use v0.2 for reading SAM files)\n";
-   print "-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d $frag_dist, optional)\n";
-   print "-i  Minimum sequence identity, default -i $seqid, optional\n";
+   print "-q  File of filenames containing long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)\n";
+   print "-s  File of filenames containing full path to BAM file(s) (use v0.2 for reading SAM files)\n";
+   print "-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d $anchor, optional)\n";
+   print "-i  Minimum sequence identity fraction (0 to 1), default -i $seqid, optional\n";
    print "-t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)\n"; 
    print "-b  Base name for your output files (optional)\n";
-   die   "-v  Runs in verbose mode (-v 1 = yes, default = no, optional)\n"; 
+   print "-v  Runs in verbose mode (-v 1 = yes, default = no, optional)\n"; 
+   die   "IMPORTANT: the order of files in -q and -s MUST match!\n";
 }
 
 my $file = $opt_f;
-my $longfile = $opt_s;
-my $queryfile = $opt_q;
-$frag_dist = $opt_d if($opt_d);
+my $fof = $opt_s;
+my $queryfof = $opt_q;
+$anchor = $opt_d if($opt_d);
 $seqid = $opt_i if($opt_i);
 $verbose = $opt_v if($opt_v);
 my $listfile = $opt_t if($opt_t);
@@ -60,16 +61,15 @@ my $assemblyruninfo="";
 if(! -e $file){
    die "Invalid file: $file -- fatal\n";
 }
-if(! -e $longfile){
-   die "Invalid file: $longfile -- fatal\n";
+if(! -e $fof){
+   die "Invalid file: $fof -- fatal\n";
 }
 
 
 ### Naming output files
 if ($base_name eq ""){
 
-   $base_name = $file . ".scaff_s-" . $longfile . "_q-" . $queryfile . "_d" . $frag_dist . "_i" . $seqid . "_t" . $listfile;
-
+   $base_name = $file . ".scaff_s-" . $fof . "_q-" . $queryfof . "_d" . $anchor . "_i" . $seqid . "_t" . $listfile;
    my $pid_num = getpgrp(0);
    $base_name .= "_pid" . $pid_num;
 }
@@ -83,9 +83,9 @@ open (LOG, ">$log") || die "Can't write to $log -- fatal\n";
 
 #-------------------------------------------------
 
-my $init_message = "\nRunning: $0 $version\n-f $file\n-s $longfile\n";
+my $init_message = "\nRunning: $0 $version\n-f $file\n-q $queryfof\n-s $fof\n";
 
-$init_message .= "-d $frag_dist\n-i $seqid\n-t $listfile\n";
+$init_message .= "-d $anchor\n-i $seqid\n-t $listfile\n";
 
 print $init_message;
 print LOG $init_message;
@@ -96,7 +96,7 @@ $assemblyruninfo=$init_message . "\n";
 my $date = `date`;
 chomp($date);
 
-my $reading_reads_message = "\n=>Reading sam: $date\n";
+my $reading_reads_message = "\n=>Reading bam: $date\n";
 print $reading_reads_message;
 print LOG $reading_reads_message;
 $assemblyruninfo.=$reading_reads_message;
@@ -104,10 +104,28 @@ my $tigpair;
 my $initpos=0;
 my $totalpairs=0;
 
-my $delta = $frag_dist;
+### READ Query read FOF
+my @qryfilearray;
+open(QRYFOF,$queryfof) || die "Can't open $queryfof for reading -- fatal.\n";
+while(<QRYFOF>){
+   chomp;
+   push @qryfilearray, $_;
+}
+close QRYFOF;
 
-my $rh = &readSeqMemory($queryfile);
-$tigpair = &readSam($longfile,$frag_dist,$seqid,$listfile,$delta,$initpos,$rh);
+my $ctline=0;
+open(FOF,$fof) || die "Can't read $fof -- fatal.\n";
+while(<FOF>){
+   chomp;
+   my $bamfile = $_;
+   my $rh = &readSeqMemory($qryfilearray[$ctline]);
+   print "Parsing alignment file $bamfile...\n";
+   $tigpair = &readBam($tigpair,$bamfile,$anchor,$seqid,$listfile,$initpos,$rh);
+   print "done.\n";
+   $ctline++;
+}
+close FOF;
+
 my $date = `date`;
 chomp($date);
 my $patchmsg = "done.\nFixing ambiguous bases (Ns): $date\n";
@@ -129,7 +147,7 @@ printf LOG $final_message, ($numgaps,$totalgap,$percentclosed,$avg,$sd,$sum,$max
 
 $assemblyruninfo .= "done: $date\n\n--------------- $0 Summary ---------------\nNumber of gaps patched : $numgaps out of $totalgap ($percentclosed %) \nAverage length (bp) : $avg\nLength st.dev +/- : $sd\nTotal bases added : $sum\nLargest gap resolved (bp) : $max\nShortest gap resolved (bp) : $min\n---------------------------------------------\n";
 
-#exit;
+exit;
 
 ###for dev. test purposes
 eval{
@@ -258,9 +276,9 @@ sub patchGaps{
 }
 
 #---------------
-sub readSam{
+sub readBam{
 
-   my ($samfile,$frag_dist,$seqid,$listfile,$delta,$initpos,$rh) = @_;
+   my ($tigpair,$bamfile,$anchor,$seqid,$listfile,$initpos,$rh) = @_;
 
    my $mem;
    if(-f $listfile){ 
@@ -272,8 +290,7 @@ sub readSam{
       close IN;
    }
    my $bt;
-   my $cutoff = $delta;
-   my ($track_all,$tigpair);
+   my $track_all;
 #HS9_159:6:1308:13492:64472      272     scaffold43,6983,f43Z6983        6439    0       536M    *       0       0       *       *       NM:i:0  AS:i:536
 #HS9_159:6:1308:13492:64472      0       scaffold30,32025,f30Z32025      25411   0       536M    *       0       0       GCTTATAAAAGAAGGTGCAATTGATCCTTGCCTTACGCCTACAAAGGAGGGTAGGTGCGATTGGTCCTTACATTCTTACGCCGCTTAGGAAGCTAGGCGAGATAGGATGGGTTCTAGAGCACCTAACTAGCTTTACACGCCGAATCCAGACCTGCCGGCTACCATCCGGATTCATACTAGATAACATAAAGGAGAGAACAACTGTTCAAAGAACAACTCGGAGAACATTTGTATCCGGTGGTTGGGGCATTGCGTGCTATACCAACTACCTCAGGTGCGCGAGGTCTCATTCCTTTTCCAAGCCCAATAAAGAAAAAATATCATTAGTGATGGTGAATCCCGTTTATATAAGTAAGTTGCATTCTTATCTAAGTAAGTGGGCTTTCCTAAGTCACTTATTGGGTGGGGGGCCCCTGTCGAGTGAGCCATCCTTCCTCACCCTCTCTTTTGTTGGGCGAGCCATCTTTCCTTTTATACGATTCGATCCAGTAGATAAGGAAGACCGACCGAGAACAACCAATGGCCTTCCCTGGGGG        *       NM:i:0  AS:i:536        XS:i:536
 #HS9_159:6:1308:13492:64472      272     scaffold22,90777,f22Z90777      90233   0       536M    *       0       0       *       *       NM:i:0  AS:i:536
@@ -301,9 +318,9 @@ sub readSam{
    my %rlength = ();
    my $min=1;
 
-   my $ERRLOG = $samfile.".bampreprocessor.err.log".$$.time();
-   my $cmd = "$SAMPATH view $samfile 2>$ERRLOG|";
-   open(IN,$cmd) || die "Error reading $samfile -- fatal.\n";
+   my $ERRLOG = $bamfile.".bampreprocessor.err.log".$$.time();
+   my $cmd = "$SAMPATH view $bamfile 2>$ERRLOG|";
+   open(IN,$cmd) || die "Error reading $bamfile -- fatal.\n";
    while(<IN>){
 
       chomp;
@@ -312,7 +329,6 @@ sub readSam{
       my @a=split(/\t/);
       my @b=split(/\,/,$a[2]);
       my @c=split(/\,/,$a[0]);
-
 
       if ($options{rlen} && /^\@SQ\s+SN:(\S+)\s+LN:(\S+)/) {
          $rlength{$1} = $2;
@@ -372,10 +388,10 @@ sub readSam{
       $si = ($qalen - $edit_dist) / $qalen if($qalen);
 
 
-      if($si >= $seqid && $qalen >= $cutoff && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min )    )){     ### this indicates anchoring bases, within $cutoff of edges
+      if($si >= $seqid && $qalen >= $anchor && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min )    )){     ### this indicates anchoring bases, within $anchor of edges
 
 
-#         print "$si >= $seqid && $qalen >= $cutoff && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min\n";
+#         print "$si >= $seqid && $qalen >= $anchor && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min\n";
          my $dir;
          my $start;
          my $end;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #AUTHOR
 #   Rene Warren
@@ -18,42 +18,43 @@
 #     
 #
 #   LICENSE
-#      LINKS, RAILS and Cobbler Copyright (c) 2014-2017 Canada's Michael Smith Genome Science Centre.  All rights reserved.
+#      LINKS, RAILS and Cobbler Copyright (c) 2014-2018 Canada's Michael Smith Genome Science Centre.  All rights reserved.
 
 use strict;
 use Getopt::Std;
 use Net::SMTP;
 use vars qw($opt_f $opt_s $opt_d $opt_i $opt_e $opt_l $opt_a $opt_v $opt_b $opt_t $opt_p $opt_q);
 getopts('f:s:d:e:l:a:v:b:t:p:i:q:');
-my ($base_name,$frag_dist,$seqid,$insert_stdev,$min_links,$max_link_ratio,$verbose)=("",250,0.9,1.0,1,0.0,0);
+my ($base_name,$anchor,$seqid,$insert_stdev,$min_links,$max_link_ratio,$verbose)=("",1000,0.9,1.0,1,0,0);
 
-my $version = "[v1.2]";
+my $version = "[v1.3]";
 my $dev = "rwarren\@bcgsc.ca";
 my $SAMPATH = "/gsc/btl/linuxbrew/bin/samtools";
 #-------------------------------------------------
 
 if(! $opt_f || ! $opt_s || ! $opt_q){
    print "Usage: $0 $version\n";
-   print "-f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)\n"; 
-   print "-q  Long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)\n";
-   print "-s  BAM file (use v1.1 for reading SAM files)\n";
-   print "-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d $frag_dist, optional)\n";
-   print "-i  Minimum sequence identity, default -i $seqid, optional\n";
+   print "-f  Assembled Sequences to further scaffold (Multi-Fasta format, required)\n"; 
+   print "-q  File of filenames containing long Sequences queried (Multi-Fasta format, required)\n";
+   print "-s  File of filenames containing full path to BAM file(s)\n";
+   print "-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d $anchor, optional)\n";
+   print "-i  Minimum sequence identity fraction (0 to 1), default -i $seqid, optional\n";
    print "-t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)\n"; 
    #print "-e  Error (%) allowed on -d distance   e.g. -e 0.1  == distance +/- 10% (default -e $insert_stdev, optional)\n";
    #print "-l  Minimum number of links to compute scaffold (default -l $min_links, optional)\n";
    #print "-a  Maximum link ratio between two best contig pairs *higher values lead to least accurate scaffolding* (default -a $max_link_ratio, optional)\n";
    print "-b  Base name for your output files (optional)\n";
-   die   "-v  Runs in verbose mode (-v 1 = yes, default = no, optional)\n"; 
+   print "-v  Runs in verbose mode (-v 1 = yes, default = no, optional)\n"; 
+   die   "IMPORTANT: the order of files in -q and -s MUST match!\n";
 }
 
 my $file = $opt_f;
-my $longfile = $opt_s;
-my $queryfile = $opt_q;
-$frag_dist = $opt_d if($opt_d);
+my $fof = $opt_s;
+my $queryfof = $opt_q;
+$anchor = $opt_d if($opt_d);
 $seqid = $opt_i if($opt_i);
 $verbose = $opt_v if($opt_v);
-#DO NOT UNCOMMENT THE FOLLOWING 3 LINES, ONLY DEFAULTS TO BE USED WITH RAILS
+#DO NOT UNCOMMENT THE FOLLOWING LINES, ONLY DEFAULTS TO BE USED WITH RAILS
 #$min_links = $opt_l if($opt_l);
 #$max_link_ratio = $opt_a if($opt_a);
 #$insert_stdev = $opt_e if($opt_e);
@@ -66,15 +67,15 @@ my $assemblyruninfo="";
 if(! -e $file){
    die "Invalid file: $file -- fatal\n";
 }
-if(! -e $longfile){
-   die "Invalid file: $longfile -- fatal\n";
+if(! -e $fof){
+   die "Invalid file: $fof -- fatal\n";
 }
 
 
 ### Naming output files
 if ($base_name eq ""){
 
-   $base_name = $file . ".scaff_s-" . $longfile . "_q-" . $queryfile . "_d" . $frag_dist . "_i" . $seqid . "_t" . $listfile;
+   $base_name = $file . ".scaff_s-" . $fof . "_q-" . $queryfof . "_d" . $anchor . "_i" . $seqid . "_e" . $insert_stdev . "_l" . $min_links . "_a" . $max_link_ratio . "_t" . $listfile;
 
    my $pid_num = getpgrp(0);
    $base_name .= "_pid" . $pid_num;
@@ -90,9 +91,9 @@ open (LOG, ">$log") || die "Can't write to $log -- fatal\n";
 
 #-------------------------------------------------
 
-my $init_message = "\nRunning: $0 $version\n-f $file\n-s $longfile\n";
+my $init_message = "\nRunning: $0 $version\n-f $file\n-q $queryfof\n-s $fof\n";
 
-$init_message .= "-d $frag_dist\n-i $seqid\n-e $insert_stdev\n-l $min_links\n-a $max_link_ratio\n-t $listfile\n";
+$init_message .= "-d $anchor\n-i $seqid\n-e $insert_stdev\n-l $min_links\n-a $max_link_ratio\n-t $listfile\n";
 
 print $init_message;
 print LOG $init_message;
@@ -103,7 +104,7 @@ $assemblyruninfo=$init_message . "\n";
 my $date = `date`;
 chomp($date);
 
-my $reading_reads_message = "\n=>Reading sam: $date\n";
+my $reading_reads_message = "\n=>Reading bam: $date\n";
 print $reading_reads_message;
 print LOG $reading_reads_message;
 $assemblyruninfo.=$reading_reads_message;
@@ -113,10 +114,27 @@ my $initpos=0;
 my $totalpairs=0;
 my ($track_all,$tig_length,$tignames);
 
-my $delta = $frag_dist;
+### READ Query read FOF
+my @qryfilearray;
+open(QRYFOF,$queryfof) || die "Can't open $queryfof for reading -- fatal.\n";
+while(<QRYFOF>){
+   chomp;
+   push @qryfilearray, $_;   
+}
+close QRYFOF;
 
-my $rh = &readSeqMemory($queryfile);
-($matepair,$track_all,$tigpair)=&readSam($longfile,$frag_dist,$seqid,$listfile,$matepair,$delta,$initpos,$rh);
+my $ctline=0;
+open(FOF,$fof) || die "Can't open $fof for reading -- fatal.\n";
+while(<FOF>){
+   chomp;
+   my $bamfile = $_;
+   my $rh = &readSeqMemory($qryfilearray[$ctline]);### ONLY READ READ SEQUENCE IN MEMORY FOR THOSE MATCHING BAM (SAME ORDER NEEDED)
+   print "Parsing alignment file $bamfile...\n";
+   ($matepair,$track_all,$tigpair)=&readBam($matepair,$track_all,$tigpair,$bamfile,$anchor,$seqid,$listfile,$matepair,$initpos,$rh);
+   print "done.\n";
+   $ctline++;
+}
+close FOF;
 
 ($tig_length,$tignames) = &readContigs($file);
 
@@ -128,7 +146,7 @@ print $sc_start_message;
 print LOG $sc_start_message;
 $assemblyruninfo.= $sc_start_message . "\n";
 
-my $contigpairs  = &pairContigs($longfile,$matepair,$track_all,$tig_length,$issues,$distribution,$totalpairs,$verbose);
+my $contigpairs  = &pairContigs($matepair,$track_all,$tig_length,$issues,$distribution,$totalpairs,$verbose);
 &buildScaffolds($contigpairs,$tig_length,$verbose);
  
 close SC;
@@ -150,7 +168,7 @@ print LOG $sc_fasta_message;
 $assemblyruninfo.= $sc_fasta_message . "\n";
 
 my $tighash = &readContigsMemory($file);
-my ($scaffold_fasta,$gsl) = &buildScaffoldFasta($scaffold,$tighash,$tigpair);
+my ($scaffold_fasta,$gsl,$merges) = &buildScaffoldFasta($scaffold,$tighash,$tigpair);
 
 $date = `date`;
 chomp($date);
@@ -159,17 +177,17 @@ print "Scaffolds fasta in: $scaffold_fasta\n";
 
 my ($avg,$sum,$max,$min) = &average($gsl);
 my $sd = &stdev($gsl);
-my $final_message = "--------------- $0 Summary ---------------\nNumber of merges induced : %i\nAverage closed gap length (bp) : %.2f\nClosed gap length st.dev +/- : %.2f\nTotal bases added : %i\nLargest gap resolved (bp) : %i\nShortest gap resolved (bp) : %i\n---------------------------------------------\n";
+my $final_message = "--------------- $0 Summary ---------------\nNumber of merges induced : %i\nAverage closed gap length (bp) : %.2f\nClosed gap length st.dev +/- : %.2f\nTotal bases added : %i\nLargest gap resolved (bp) : %i\nShortest gap resolved (bp) : %i\n---------------------------------------------\n*0 bp gaps are not counted towards the average\n";
 my @arrsg=@$gsl;
 my $numgaps = $#arrsg+1;
-printf $final_message, ($numgaps,$avg,$sd,$sum,$max,$min);
-printf LOG $final_message, ($numgaps,$avg,$sd,$sum,$max,$min);
+printf $final_message, ($merges,$avg,$sd,$sum,$max,$min);
+printf LOG $final_message, ($merges,$avg,$sd,$sum,$max,$min);
 
-$assemblyruninfo .= "done: $date\n\n--------------- $0 Summary ---------------\nNumber of merges : $numgaps\nAverage closed gap length (bp) : $avg\nClosed gap length st.dev +/- : $sd\nTotal bases added : $sum\nLargest gap resolved (bp) : $max\nShortest gap resolved (bp) : $min\n---------------------------------------------\n";
+$assemblyruninfo .= "done: $date\n\n--------------- $0 Summary ---------------\nNumber of merges : $numgaps\nAverage closed gap length (bp) : $avg\nClosed gap length st.dev +/- : $sd\nTotal bases added : $sum\nLargest gap resolved (bp) : $max\nShortest gap resolved (bp) : $min\n---------------------------------------------\n*0 bp gaps are not counted towards the average\n";
 
 close LOG;
 
-#exit;
+exit;
 
 ###for dev. test purposes
 eval{
@@ -249,9 +267,9 @@ sub readContigs{
 }
 
 #---------------
-sub readSam{
+sub readBam{
 
-   my ($samfile,$frag_dist,$seqid,$listfile,$matepair,$delta,$initpos,$rh) = @_;
+   my ($matepair,$track_all,$tigpair,$bamfile,$anchor,$seqid,$listfile,$matepair,$initpos,$rh) = @_;
 
    my $mem;
    if(-f $listfile){ 
@@ -263,8 +281,6 @@ sub readSam{
       close IN;
    }
    my $bt;
-   my $cutoff = $delta;
-   my ($matepair,$track_all,$tigpair);#$tig_length);
 #HS9_159:6:1308:13492:64472      272     scaffold43,6983,f43Z6983        6439    0       536M    *       0       0       *       *       NM:i:0  AS:i:536
 #HS9_159:6:1308:13492:64472      0       scaffold30,32025,f30Z32025      25411   0       536M    *       0       0       GCTTATAAAAGAAGGTGCAATTGATCCTTGCCTTACGCCTACAAAGGAGGGTAGGTGCGATTGGTCCTTACATTCTTACGCCGCTTAGGAAGCTAGGCGAGATAGGATGGGTTCTAGAGCACCTAACTAGCTTTACACGCCGAATCCAGACCTGCCGGCTACCATCCGGATTCATACTAGATAACATAAAGGAGAGAACAACTGTTCAAAGAACAACTCGGAGAACATTTGTATCCGGTGGTTGGGGCATTGCGTGCTATACCAACTACCTCAGGTGCGCGAGGTCTCATTCCTTTTCCAAGCCCAATAAAGAAAAAATATCATTAGTGATGGTGAATCCCGTTTATATAAGTAAGTTGCATTCTTATCTAAGTAAGTGGGCTTTCCTAAGTCACTTATTGGGTGGGGGGCCCCTGTCGAGTGAGCCATCCTTCCTCACCCTCTCTTTTGTTGGGCGAGCCATCTTTCCTTTTATACGATTCGATCCAGTAGATAAGGAAGACCGACCGAGAACAACCAATGGCCTTCCCTGGGGG        *       NM:i:0  AS:i:536        XS:i:536
 #HS9_159:6:1308:13492:64472      272     scaffold22,90777,f22Z90777      90233   0       536M    *       0       0       *       *       NM:i:0  AS:i:536
@@ -292,9 +308,9 @@ sub readSam{
    my %rlength = ();
    my $min=1;
 
-   my $ERRLOG = $samfile.".bampreprocessor.err.log".$$.time();
-   my $cmd = "$SAMPATH view $samfile 2>$ERRLOG|";
-   open(IN,$cmd) || die "Error reading $samfile -- fatal.\n";
+   my $ERRLOG = $bamfile.".bampreprocessor.err.log".$$.time();
+   my $cmd = "$SAMPATH view $bamfile 2>$ERRLOG|";###read BAM
+   open(IN,$cmd) || die "Error reading $bamfile -- fatal.\n";
    while(<IN>){
 
       chomp;
@@ -363,11 +379,10 @@ sub readSam{
       $si = ($qalen - $edit_dist) / $qalen if($qalen);
 
 
-      if($si >= $seqid && $qalen >= $cutoff && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min )    )){     ### this indicates anchoring bases, within $cutoff of edges
+      if($si >= $seqid && $qalen >= $anchor && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min )    )){     ### this indicates anchoring bases, within $anchor of edges
 
 
-#         print "$si >= $seqid && $qalen >= $cutoff && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min\n";
-         my $dir;
+#         print "$si >= $seqid && $qalen >= $anchor && (( $rstart <= $min &&  ($qlen-$qend)<= $min) || ($qstart<=$min && ($rlen-$rend)<=$min\n";
          my $start;
          my $end;
          ###Coordinates on the scaffolds
@@ -389,8 +404,8 @@ sub readSam{
             $orient="f";
          }
 
-
-         $t->{$a[0]}{$a[2]}{'orient'}= $dir . $orient ;
+         #$t->{$a[0]}{$a[2]}{'order'}=$ct;
+         $t->{$a[0]}{$a[2]}{'orient'}=$orient ;
          $t->{$a[0]}{$a[2]}{'real'}=$read;
          $t->{$a[0]}{$a[2]}{'length'}=$qlen;
          if($a[2]=~/\D+(\d+)\,(\d+)/){### scaffoldNUMBER,LENGTH eg. wga1,1301
@@ -422,6 +437,7 @@ sub readSam{
          my $current="";
          my $totalreadlength=0;
          foreach my $scaff(keys %$scafflist){
+         #foreach my $scaff(sort {$scafflist->{$a}{'order'}<=>$scafflist->{$a}{'order'}} keys %$scafflist){
             $current = $scafflist->{$scaff}{'real'};
             $prev = $current if($prev eq "");
             $totalreadlength = $scafflist->{$scaff}{'length'};
@@ -433,7 +449,8 @@ sub readSam{
          }
 
          if(! defined $mem->{$rd} && ! defined $bt->{$one}{$two} && ($track_all->{$current}{'qstart'} > $track_all->{$prev}{'qend'} || $track_all->{$prev}{'qstart'} > $track_all->{$current}{'qend'}) && $rh->{$rd} ne ""){### ADDED NO NULL SEQUENCES 30JAN2016
-            $bt->{$one}{$two}=1;### only one kollector merge per site 
+         #if(! defined $mem->{$rd} && ($track_all->{$current}{'qstart'} > $track_all->{$prev}{'qend'} || $track_all->{$prev}{'qstart'} > $track_all->{$current}{'qend'}) && $rh->{$rd} ne ""){### ADDED NO NULL SEQUENCES 30JAN2016
+            $bt->{$one}{$two}=1;### beenthere, bt, tracks that two contigs have been merged by a read (first one it saw here) .. to allow patch to match the chosen read support
             my $pos=0;
             $pos = $track_all->{$prev}{'qend'} if($track_all->{$current}{'qstart'} > $track_all->{$prev}{'qend'});
             $pos = $track_all->{$current}{'qend'} if($track_all->{$prev}{'qstart'} > $track_all->{$current}{'qend'});            
@@ -442,7 +459,6 @@ sub readSam{
             my $patch = substr($rh->{$rd},$pos,$gapseqlen-1);
 
             #$patch = &reverseComplement($patch) if($track_all->{$prev}{'orient'} eq "-" && $track_all->{$current}{'orient'} eq "-"  );
-           
 
             print "GAP:$patch\n" if($verbose);
 
@@ -450,18 +466,17 @@ sub readSam{
             $matepair->{$prev}{$current}{'bt'}=0;
 
             ###JUST SOME TEST CODE
-            if(defined $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'seq'}){
+            if(defined $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'seq'}){### previous patch saved
                $occ++;
-               print "$prev ($track_all->{$prev}{'tig'})...$current ($track_all->{$current}{'tig'})\n$tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'seq'}\nNEW GAP:\n$patch\n";
-               if($patch ne $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'seq'}){print "NOT SAME\n\n";}else{print "SAME\n\n";$same++;}
+               #print "$prev ($track_all->{$prev}{'tig'})...$current ($track_all->{$current}{'tig'})\n$tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'seq'}\nNEW GAP:\n$patch\n";
+               #if($patch ne $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'seq'}){print "NOT SAME\n\n";}else{print "SAME\n\n";$same++;}
             }
-
+            ### EVEN THOUGH A COUNTER 'distr' TRACKS NUMBER OF SUPPORT FOR TIG A AND B, LAST COMBO OVERRIDES REST THIS COULD BE PROBLEMATIC WHEN MULTIPLE READS SUPPORT SAME CONTIGS, SEE NOTE ABOVE AND REASON TO LIMIT SUPPORT TO FIRST READ SEEN
             $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'distr'}++;
             $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'seq'}=$patch;
             $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'configuration'}=$track_all->{$prev}{'orient'} . $track_all->{$prev}{'tig'} . $track_all->{$current}{'orient'} . $track_all->{$current}{'tig'};
             $tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'origin'}=$rd;
             #$tigpair->{$track_all->{$prev}{'tig'}}{$track_all->{$current}{'tig'}}{'oriseq'}=$rh->{$rd};###original long read seq - consider commenting out
-
 
             print ">>>> $track_all->{$prev}{'tig'} $track_all->{$current}{'tig'} $patch\n" if($verbose);
 
@@ -556,7 +571,7 @@ sub computeLayout{
          my ($match1,$link1,$gaps1,$match2,$link2,$gaps2,$cntloop)=("",0,0,"",0,0,0);
 
          LINK:
-         foreach my $match (sort {$list->{$b}{'links'}<=>$list->{$a}{'links'}} keys %$list){
+         foreach my $match (sort {$list->{$b}{'links'}<=>$list->{$a}{'links'}} keys %$list){### sort by most supported links
 
             if($cntloop){
                ($match2,$link2,$gaps2) = ($match,$list->{$match}{'links'},$list->{$match}{'gaps'});
@@ -640,7 +655,7 @@ sub getDistance{
 #build contig pairs based on template information  -  must satisfy user-defined criterions (-d -e)
 sub pairContigs{
 
-   my ($longfile,$matepair,$track,$tig_length,$issues,$distribution,$totalpairs,$verbose) = @_;
+   my ($matepair,$track,$tig_length,$issues,$distribution,$totalpairs,$verbose) = @_;
    my ($ct_illogical, $ct_ok_contig, $ct_ok_pairs, $ct_problem_pairs, $ct_iz_issues, $ct_single, $ct_both)= (0,0,0,0,0,0,0);
    my $ct_illogical_hash;
    my $ct_ok_contig_hash;
@@ -649,7 +664,7 @@ sub pairContigs{
    my $ct_iz_issues_hash;
    my $ct_single_hash;
    my $ct_both_hash;
-
+   #$verbose=1;# XX for testing purposes
    my ($pair,$err,$track_insert);
 
    print "Pairing contigs...\n" if ($verbose);
@@ -657,7 +672,6 @@ sub pairContigs{
    open(PET, ">$issues") || die "Can't open $issues for writing -- fatal\n";
 
    foreach my $read_a (keys %$matepair){ 
-
       my $mateslist = $matepair->{$read_a};
 
       foreach my $read_b (keys %$mateslist){
@@ -670,7 +684,7 @@ sub pairContigs{
             my $insert_size = $mateslist->{$read_b}{'is'};
             my $min_allowed = -1 * ($insert_stdev * $insert_size);
             my ($low_iz, $up_iz) = ($insert_size + $min_allowed, $insert_size - $min_allowed);
-
+            #print "MIN ALLOWED: $min_allowed\n";
             print "Pair read1=$read_a read2=$read_b\n" if ($verbose);
 
             if(defined $track->{$read_a}{'tig'} && defined $track->{$read_b}{'tig'}){### both pairs assembled
@@ -710,6 +724,7 @@ sub pairContigs{
                             $pair->{$rtig_b}{$rtig_a}{'gaps'} += $d;
                             $ct_ok_pairs++;
                             $ct_ok_pairs_hash->{$insert_size}++;
+                            #print "$ftig_a ($read_a) ...$ftig_b ($read_b)\n";
                          }else{
                             my $err_pair = $ftig_a . "-". $ftig_b;
                             $err->{$err_pair}{'links'}++;
@@ -729,6 +744,7 @@ sub pairContigs{
                             $pair->{$ftig_b}{$rtig_a}{'gaps'} += $d;
                             $ct_ok_pairs++;
                             $ct_ok_pairs_hash->{$insert_size}++;
+                            #print "$ftig_a ($read_a) ...$rtig_b ($read_b)\n";
                          }else{
                             my $err_pair = $ftig_a . "-". $rtig_b;
                             $err->{$err_pair}{'links'}++;
@@ -750,6 +766,7 @@ sub pairContigs{
                            $pair->{$rtig_a}{$rtig_b}{'gaps'} += $d;
                            $ct_ok_pairs++;
                            $ct_ok_pairs_hash->{$insert_size}++;
+                           #print "$ftig_a ($read_a) ...$ftig_b ($read_b)\n";
                         }else{
                            my $err_pair = $ftig_b . "-". $ftig_a;
                            $err->{$err_pair}{'links'}++;
@@ -769,6 +786,7 @@ sub pairContigs{
                            $pair->{$rtig_a}{$ftig_b}{'gaps'} += $d;
                            $ct_ok_pairs++;
                            $ct_ok_pairs_hash->{$insert_size}++;
+                           #print "$ftig_a ($read_a) ...$rtig_b ($read_b)\n";
                         }else{
                            my $err_pair = $rtig_b . "-". $ftig_a;
                            $err->{$err_pair}{'links'}++;
@@ -834,7 +852,7 @@ sub pairContigs{
    my $ct_both_reads = $ct_both * 2;
 
    print LOG "\n===========PAIRED K-MER STATS===========\n";
-   print LOG "Total number of pairs extracted from -s $longfile: $totalpairs\n";
+   print LOG "Total number of pairs extracted from -s $fof: $totalpairs\n";
    print LOG "At least one sequence/pair missing from contigs: $ct_single\n";
    print LOG "Assembled pairs: $ct_both ($ct_both_reads sequences)\n";
    print LOG "\tSatisfied in distance/logic within contigs (i.e. -> <-, distance on target: $ct_ok_contig\n";
@@ -950,6 +968,7 @@ sub buildScaffoldFasta{
    my $tot=0;
    my $sct=0;
    my @gsl;
+   my $merges=0;
 
    while(<IN>){
       chomp;   
@@ -970,7 +989,7 @@ sub buildScaffoldFasta{
       my $scaffseq = "";
 
       my $ct=0;
-
+      $merges += $#tig;
       foreach my $t (@tig){
          
     
@@ -999,6 +1018,7 @@ sub buildScaffoldFasta{
                if(defined $tigpair->{$tnum}{$ftnum}{'seq'}){
                  print LIST "$tigpair->{$tnum}{$ftnum}{'origin'}\n";
                  $gapseq = lc($tigpair->{$tnum}{$ftnum}{'seq'});
+		 
                  my $configuration = $tigpair->{$tnum}{$ftnum}{'configuration'};
                  my ($str1,$tig1,$str2,$tig2) = ($1,$2,$3,$4) if($tigpair->{$tnum}{$ftnum}{'configuration'}=~/([rf])(\d+)([rf])(\d+)/);
                  if($tig1==$tnum && $tig2==$ftnum){
@@ -1042,7 +1062,7 @@ sub buildScaffoldFasta{
    close IN;
    close OUT;
    close LIST;
-   return $scaffold_fasta,\@gsl;
+   return $scaffold_fasta,\@gsl,$merges;
 }
 
 ## We hope this code is useful to you -- Please send comments & suggestions to rwarren at bcgsc.ca
