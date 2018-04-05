@@ -18,25 +18,26 @@
 #  
 
 #LICENSE
-#   LINKS, RAILS and Cobbler Copyright (c) 2014-2016 Canada's Michael Smith Genome Science Centre.  All rights reserved.
+#   LINKS, RAILS and Cobbler Copyright (c) 2014-2017 Canada's Michael Smith Genome Science Centre.  All rights reserved.
 
 use strict;
 use Getopt::Std;
 use Net::SMTP;
 use vars qw($opt_f $opt_s $opt_d $opt_i $opt_v $opt_b $opt_t $opt_q);
 getopts('f:s:d:v:b:t:i:q:');
-my ($base_name,$frag_dist,$seqid,$verbose)=("",1000,0.9,0);
+my ($base_name,$frag_dist,$seqid,$verbose)=("",250,0.9,0);
 
-my $version = "[v0.2]";
+my $version = "[v0.3]";
 my $dev = "rwarren\@bcgsc.ca";
+my $SAMPATH = "/gsc/btl/linuxbrew/bin/samtools";
 
 #-------------------------------------------------
 
 if(! $opt_f || ! $opt_s || ! $opt_q){
    print "Usage: $0 $version\n";
-   print "-f  Assembled Sequences to further scaffold (Multi-Fasta format, required)\n"; 
-   print "-q  Long Sequences queried (Multi-Fasta format, required)\n";
-   print "-s  SAM file\n";
+   print "-f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)\n"; 
+   print "-q  Long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)\n";
+   print "-s  BAM file (use v0.2 for reading SAM files)\n";
    print "-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d $frag_dist, optional)\n";
    print "-i  Minimum sequence identity, default -i $seqid, optional\n";
    print "-t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)\n"; 
@@ -67,7 +68,7 @@ if(! -e $longfile){
 ### Naming output files
 if ($base_name eq ""){
 
-   $base_name = $file . ".scaff_s-" . $longfile . "_d" . $frag_dist . "_i" . $seqid . "_t" . $listfile;
+   $base_name = $file . ".scaff_s-" . $longfile . "_q-" . $queryfile . "_d" . $frag_dist . "_i" . $seqid . "_t" . $listfile;
 
    my $pid_num = getpgrp(0);
    $base_name .= "_pid" . $pid_num;
@@ -113,21 +114,22 @@ my $patchmsg = "done.\nFixing ambiguous bases (Ns): $date\n";
 print $patchmsg;
 print LOG $patchmsg;
 $assemblyruninfo.=$patchmsg;
-my $gsl = &patchGaps($file,$tigpair,$newassemblyfile,$tsvfile);
+my ($gsl,$totalgap) = &patchGaps($file,$tigpair,$newassemblyfile,$tsvfile);
 
 my $date = `date`;
 chomp($date);
 my ($avg,$sum,$max,$min) = &average($gsl);
 my $sd = &stdev($gsl);
-my $final_message = "done: $date\n\n--------------- $0 Summary ---------------\nNumber of gaps patched : %i\nAverage length (bp) : %.2f\nLength st.dev +/- : %.2f\nTotal bases added : %i\nLargest gap resolved (bp) : %i\nShortest gap resolved (bp) : %i\n---------------------------------------------\n";
+my $final_message = "done: $date\n\n--------------- $0 Summary ---------------\nNumber of gaps patched : %i out of %i (%.2f %%)\nAverage length (bp) : %.2f\nLength st.dev +/- : %.2f\nTotal bases added : %i\nLargest gap resolved (bp) : %i\nShortest gap resolved (bp) : %i\n---------------------------------------------\n";
 my @arrsg=@$gsl;
 my $numgaps = $#arrsg+1;
-printf $final_message, ($numgaps,$avg,$sd,$sum,$max,$min);
-printf LOG $final_message, ($numgaps,$avg,$sd,$sum,$max,$min);
+my $percentclosed = $numgaps / $totalgap *100;
+printf $final_message, ($numgaps,$totalgap,$percentclosed,$avg,$sd,$sum,$max,$min);
+printf LOG $final_message, ($numgaps,$totalgap,$percentclosed,$avg,$sd,$sum,$max,$min);
 
-$assemblyruninfo .= "done: $date\n\n--------------- $0 Summary ---------------\nNumber of gaps patched : $numgaps\nAverage length (bp) : $avg\nLength st.dev +/- : $sd\nTotal bases added : $sum\nLargest gap resolved (bp) : $max\nShortest gap resolved (bp) : $min\n---------------------------------------------\n";
+$assemblyruninfo .= "done: $date\n\n--------------- $0 Summary ---------------\nNumber of gaps patched : $numgaps out of $totalgap ($percentclosed %) \nAverage length (bp) : $avg\nLength st.dev +/- : $sd\nTotal bases added : $sum\nLargest gap resolved (bp) : $max\nShortest gap resolved (bp) : $min\n---------------------------------------------\n";
 
-exit;
+#exit;
 
 ###for dev. test purposes
 eval{
@@ -150,7 +152,7 @@ exit;
 #-----------------
 sub readSeqMemory{
 
-	my $file = shift;
+      my $file = shift;
 
       my $fh;
       my $prev="NA";
@@ -252,7 +254,7 @@ sub patchGaps{
    print "$endmessage";
    $assemblyruninfo .= $endmessage;
 
-   return \@gapspatched;
+   return \@gapspatched,$totalgap;
 }
 
 #---------------
@@ -299,7 +301,9 @@ sub readSam{
    my %rlength = ();
    my $min=1;
 
-   open(IN,$samfile) || die "Error reading $samfile -- fatal.\n";
+   my $ERRLOG = $samfile.".bampreprocessor.err.log".$$.time();
+   my $cmd = "$SAMPATH view $samfile 2>$ERRLOG|";
+   open(IN,$cmd) || die "Error reading $samfile -- fatal.\n";
    while(<IN>){
 
       chomp;

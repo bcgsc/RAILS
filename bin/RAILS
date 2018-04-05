@@ -18,25 +18,25 @@
 #     
 #
 #   LICENSE
-#      LINKS, RAILS and Cobbler Copyright (c) 2014-2016 Canada's Michael Smith Genome Science Centre.  All rights reserved.
+#      LINKS, RAILS and Cobbler Copyright (c) 2014-2017 Canada's Michael Smith Genome Science Centre.  All rights reserved.
 
 use strict;
 use Getopt::Std;
 use Net::SMTP;
 use vars qw($opt_f $opt_s $opt_d $opt_i $opt_e $opt_l $opt_a $opt_v $opt_b $opt_t $opt_p $opt_q);
 getopts('f:s:d:e:l:a:v:b:t:p:i:q:');
-my ($base_name,$frag_dist,$seqid,$insert_stdev,$min_links,$max_link_ratio,$verbose)=("",1000,0.9,1.0,1,0.0,0);
+my ($base_name,$frag_dist,$seqid,$insert_stdev,$min_links,$max_link_ratio,$verbose)=("",250,0.9,1.0,1,0.0,0);
 
-my $version = "[v1.1]";
+my $version = "[v1.2]";
 my $dev = "rwarren\@bcgsc.ca";
-
+my $SAMPATH = "/gsc/btl/linuxbrew/bin/samtools";
 #-------------------------------------------------
 
 if(! $opt_f || ! $opt_s || ! $opt_q){
    print "Usage: $0 $version\n";
-   print "-f  Assembled Sequences to further scaffold (Multi-Fasta format, required)\n"; 
-   print "-q  Long Sequences queried (Multi-Fasta format, required)\n";
-   print "-s  SAM file\n";
+   print "-f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)\n"; 
+   print "-q  Long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)\n";
+   print "-s  BAM file (use v1.1 for reading SAM files)\n";
    print "-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d $frag_dist, optional)\n";
    print "-i  Minimum sequence identity, default -i $seqid, optional\n";
    print "-t  LIST of names/header, long sequences to avoid using for merging/gap-filling scaffolds (optional)\n"; 
@@ -74,7 +74,7 @@ if(! -e $longfile){
 ### Naming output files
 if ($base_name eq ""){
 
-   $base_name = $file . ".scaff_s-" . $longfile . "_d" . $frag_dist . "_i" . $seqid . "_e" . $insert_stdev . "_l" . $min_links . "_a" . $max_link_ratio . "_t" . $listfile;
+   $base_name = $file . ".scaff_s-" . $longfile . "_q-" . $queryfile . "_d" . $frag_dist . "_i" . $seqid . "_t" . $listfile;
 
    my $pid_num = getpgrp(0);
    $base_name .= "_pid" . $pid_num;
@@ -165,11 +165,11 @@ my $numgaps = $#arrsg+1;
 printf $final_message, ($numgaps,$avg,$sd,$sum,$max,$min);
 printf LOG $final_message, ($numgaps,$avg,$sd,$sum,$max,$min);
 
-$assemblyruninfo .= "done: $date\n\n--------------- $0 Summary ---------------\nNumber of gaps patched : $numgaps\nAverage length (bp) : $avg\nLength st.dev +/- : $sd\nTotal bases added : $sum\nLargest gap resolved (bp) : $max\nShortest gap resolved (bp) : $min\n---------------------------------------------\n";
+$assemblyruninfo .= "done: $date\n\n--------------- $0 Summary ---------------\nNumber of merges : $numgaps\nAverage closed gap length (bp) : $avg\nClosed gap length st.dev +/- : $sd\nTotal bases added : $sum\nLargest gap resolved (bp) : $max\nShortest gap resolved (bp) : $min\n---------------------------------------------\n";
 
 close LOG;
 
-exit;
+#exit;
 
 ###for dev. test purposes
 eval{
@@ -292,7 +292,9 @@ sub readSam{
    my %rlength = ();
    my $min=1;
 
-   open(IN,$samfile) || die "Error reading $samfile -- fatal.\n";
+   my $ERRLOG = $samfile.".bampreprocessor.err.log".$$.time();
+   my $cmd = "$SAMPATH view $samfile 2>$ERRLOG|";
+   open(IN,$cmd) || die "Error reading $samfile -- fatal.\n";
    while(<IN>){
 
       chomp;
