@@ -24,7 +24,7 @@ use strict;
 use Getopt::Std;
 use Net::SMTP;
 use vars qw($opt_f $opt_s $opt_d $opt_i $opt_e $opt_l $opt_a $opt_v $opt_b $opt_t $opt_p $opt_q $opt_g);
-getopts('f:s:d:e:l:a:v:b:t:p:i:q:');
+getopts('f:s:d:e:l:a:v:b:t:p:i:q:g:');
 my ($base_name,$anchor,$seqid,$insert_stdev,$min_links,$max_link_ratio,$grace,$verbose)=("",1000,0.9,1.0,1,0.99,1,0,);
 
 my $version = "[v1.4]";
