@@ -1,3 +1,5 @@
+![Logo](https://github.com/warrenlr/rails/blob/master/rails-logo.png)
+
 # RAILS v1.4 and Cobbler v0.5
 ## Rene L. Warren, 2014-2018
 ## email: rwarren at bcgsc.ca
