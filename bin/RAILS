@@ -217,7 +217,7 @@ exit;
 sub average{
         my $data = shift;
         if (not @$data) {
-                die("Empty arrayn -- maybe the scaffold merging step did not necessitate gap filling.");
+                die("Empty arrayn -- maybe the scaffold merging step did not necessitate gap filling. It is also possible that your version of samtools is not supported. This script was tested with samtools v1.8.");
         }
         my $total = 0;
         my $max = 0;
