@@ -24,6 +24,14 @@ RAILS is an all-in-one scaffolder and gap-filler. Its process is similar to that
 
 You can test the software by executing "runme.sh" in the test folder. A simulated SARS genome assembly is provided to test the software. 
 
+### What's new in v1.4.1
+
+1. Save in memory gap sequence from highest-matching read for both cobbler and RAILS
+2. Track the number of reads support in cobbler (-l) and RAILS, and allow cutoff when scaffolding (-l and -a), with latter (RAILS)
+3. Remove the hardcoded two-hit requirement for a read in RAILS. Instead, process two best hits for each read aligning different sequences
+4. Implement grace (-g) option, which effectively simulate read trimming (valuable for Nanopore read mapping (suggested -g 250 to -g 500))
+5. bug fixes (-list.tsv (cobbler) reported some instances of gap-fill regions not fixed in the assembly). cobbler gap-fill table now lists #supporting reads for each gap filled
+
 
 ### Implementation and requirements
 -------------
