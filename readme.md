@@ -7,10 +7,11 @@
 ### Name
 -------------
 
+<pre>
 RAILS: Radial Assembly Improvement by Long Sequence Scaffolding
-&
-Cobbler: Gap-filling with long sequences
 
+Cobbler: Gap-filling with long sequences
+</pre>
 
 ### Description
 -------------
