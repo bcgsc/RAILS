@@ -1,7 +1,7 @@
 ![Logo](https://github.com/bcgsc/RAILS/blob/master/rails-logo.png)
 
 # RAILS v1.4.1 and Cobbler v0.5.1
-## Rene L. Warren, 2014-2018
+## Rene L. Warren, 2014-2019
 ## email: rwarren at bcgsc.ca
 
 ### Name
@@ -187,7 +187,7 @@ Warren RL, Sutton GG, Jones SJM, Holt RA.  2007.  Assembling millions of short D
 ### Runs on the human genome
 -------------
 
-On a human draft assembly, cobbler patched over 65% of the gaps using 1, 2.5, 5, 15 kb long DNA sequences simulated from the human genome reference. The Pearson correlation between the predicted gap sizes and the size of patched gaps is R=0.8150
+On a human HG004 ABySS draft assembly, cobbler filled over 65% of the gaps using 1, 2.5, 5, 15 kb long DNA sequences simulated from the human genome reference. The Pearson correlation between the predicted gap sizes and the size of patched gaps is R=0.8150
 
 
 **Table 1.** Patching gaps with Cobbler (v0.2) using simulated 1, 2.5, 5, 15kbp simulated long sequences from human genome reference GRCh38.
@@ -232,7 +232,7 @@ RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e
 ### License Preamble
 -------------
 
-RAILS and Cobbler Copyright (c) 2014-2018 British Columbia Cancer Agency Branch.  All rights reserved.
+RAILS and Cobbler Copyright (c) 2014-2019 British Columbia Cancer Agency Branch.  All rights reserved.
 
 RAILS and Cobbler are released under the GNU General Public License v3
 
