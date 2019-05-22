@@ -67,9 +67,9 @@ Alternatively, individual tools are available within the github repository
 ### Dependencies
 -------------
 
-Make sure you have installed bwa (Version: 0.7.15-r1140) and that is is in your path.
+Make sure you have installed bwa (Version: 0.7.15-r1140) or minimap2 (2.15-r905) and that they are in your path.
 Make sure you have installed samtools (Version: 1.8) and that is is in your path.
-Compatible tools may be used, but have not been tested fully (eg. minimap2, sambamba)
+Compatible tools may be used, but have not been tested fully (eg. sambamba)
 
 
 ### Test data
@@ -86,7 +86,7 @@ execute runme.sh
 (./runme.sh)
 
 2. Human:
-execute runmeHuman.sh (will take a while to run)
+execute runmeHuman.sh (will take a while to run with bwa mem (~12h). With minimap2, this test will take ~1h.)
 (./runmeHuman.sh)
 </pre>
 
