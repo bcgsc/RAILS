@@ -73,7 +73,7 @@ Alternatively, individual tools are available for download/cloning within the gi
 -------------
 
 Make sure you have installed bwa (Version: 0.7.15-r1140) or minimap2 (2.15-r905) and that they are in your path.
-Make sure you have installed samtools (Version: 1.8) and that is is in your path.
+Make sure you have installed samtools (Version: 1.8) and that it is in your path.
 Compatible tools may be used, but have not been tested fully (eg. sambamba)
 
 
