@@ -30,7 +30,7 @@ You can test the software by executing "runme.sh" in the test folder. A simulate
 
 ### What's new in v1.5.0
 
-Ability to stream the .sam output of your favorite aligner (tested with minimap2/human data -- see runRAILSminimapSTREAM.sh) directly into clobbler/RAILS
+Ability to stream the .sam output of your favorite aligner directly into clobbler/RAILS(tested with minimap2/human data -- see runRAILSminimapSTREAM.sh) 
 
 
 ### What's new in v1.4.2
