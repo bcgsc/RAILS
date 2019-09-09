@@ -16,9 +16,9 @@ RUN apt-get update -qq && apt-get install -y bwa wget cpanminus
 #
 # Download the software
 #
-RUN wget https://github.com/bcgsc/RAILS/tree/master/tarball/rails_v1-4-1.tar.gz && tar xvfz rails_v1-4-1.tar.gz && rm rails_v1-4-1.tar.gz 
+RUN wget https://github.com/bcgsc/RAILS/tree/master/tarball/rails_v1-5-0.tar.gz && tar xvfz rails_v1-5-0.tar.gz && rm rails_v1-5-0.tar.gz 
 
 #
 # Set the default working directory
 #
-WORKDIR /RAILS_v1.4.1
+WORKDIR /RAILS_v1.5.0
