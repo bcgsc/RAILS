@@ -30,7 +30,7 @@ You can test the software by executing "runme.sh" in the test folder. A simulate
 
 ### What's new in v1.5.0
 
-Ability to stream the .sam output of your favorite aligner (tested with minimap2/human data -- see runRAILSminimapSTREAM.sh) directly into clobbler/RAILS
+Ability to stream the .sam output of your favorite aligner directly into cobbler/RAILS (tested with minimap2/human data -- see runRAILSminimapSTREAM.sh)
 
 
 ### What's new in v1.4.2
@@ -67,8 +67,8 @@ I encourage the community to contribute to the development of this software, by 
 Download the tar ball, gunzip and extract the files on your system using:
 
 <pre>
-gunzip rails_v1-4-2.tar.gz
-tar -xvf rails_v1-4-2.tar
+gunzip rails_v1-5-0.tar.gz
+tar -xvf rails_v1-5-0.tar
 </pre>
 
 Alternatively, individual tools are available for download/cloning within the github repository
@@ -135,10 +135,10 @@ this pipeline will:
 8. Align the reformatted long sequences to your re-formatted cobbler assembly
 9. Run RAILS to generate a newly scaffolded assembly draft
 
-Usage: ./cobbler.pl [v0.5.1]
+Usage: ./cobbler.pl [v0.6.0]
 -f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)
 -q  File of filenames containing long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)
--s  File of filenames containing full path to BAM file(s) (use v0.2 for reading SAM files)
+-s  File of filenames containing full path to BAM file(s) (use v0.2 for reading SAM files) or simply type: stream for streaming the .sam output of minimap2 or favorite aligner
 -p  Full path to samtools (known to work/tested with v1.8, required)
 -d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d 1000, optional)
 -i  Minimum sequence identity fraction (0 to 1), default -i 0.9, optional
@@ -150,10 +150,10 @@ Usage: ./cobbler.pl [v0.5.1]
 IMPORTANT: the order of files in -q and -s MUST match!
 
 
-Usage: ./RAILS [v1.4.1] (The script has not changed in v1.4.2)
+Usage: ./RAILS [v1.5.0]
 -f  Assembled Sequences to further scaffold (Multi-Fasta format, required)
 -q  File of filenames containing long Sequences queried (Multi-Fasta format, required)
--s  File of filenames containing full path to BAM file(s)
+-s  File of filenames containing full path to BAM file(s) or simply type: stream for streaming the .sam output of minimap2 or favorite aligner
 -p  Full path to samtools (known to work/tested with v1.8, required)
 -d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d 1000, optional)
 -i  Minimum sequence identity fraction (0 to 1), default -i 0.9, optional
@@ -164,6 +164,8 @@ Usage: ./RAILS [v1.4.1] (The script has not changed in v1.4.2)
 -b  Base name for your output files (optional)
 -v  Runs in verbose mode (-v 1 = yes, default = no, optional)
 IMPORTANT: the order of files in -q and -s MUST match!
+
+
 
 </pre>
 

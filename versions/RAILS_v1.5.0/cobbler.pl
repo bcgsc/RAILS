@@ -37,7 +37,7 @@ if(! $opt_f || ! $opt_s || ! $opt_q || ! $opt_p){
    print "Usage: $0 $version\n";
    print "-f  Assembled Sequences to further scaffold (Multi-FASTA format NO LINE BREAKS, required)\n"; 
    print "-q  File of filenames containing long Sequences queried (Multi-FASTA format NO LINE BREAKS, required)\n";
-   print "-s  File of filenames containing full path to BAM file(s) (use v0.2 for reading SAM files) or simply type: "stream" for streaming the .sam output of minimap2 or favorite aligner\n";
+   print "-s  File of filenames containing full path to BAM file(s) (use v0.2 for reading SAM files) or simply type: stream for streaming the .sam output of minimap2 or favorite aligner\n";
    print "-p  Full path to samtools (known to work/tested with v1.8, required)\n";
    print "-d  Anchoring bases on contig edges (ie. minimum required alignment size on contigs, default -d $anchor, optional)\n";
    print "-i  Minimum sequence identity fraction (0 to 1), default -i $seqid, optional\n";
