@@ -1,3 +1,7 @@
+[![Release](https://img.shields.io/github/release/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/releases)
+[![Downloads](https://img.shields.io/github/downloads/bcgsc/RAILS/total?logo=github)](https://github.com/bcgsc/RAILS/releases/download/v1.5.1/rails_v1-5-1.tar.gz)
+[![Issues](https://img.shields.io/github/issues/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/issues)
+
 ![Logo](https://github.com/bcgsc/RAILS/blob/master/rails-logo.png)
 
 # RAILS v1.5.1 and Cobbler v0.6.1
@@ -109,7 +113,8 @@ execute runmeHuman.sh (will take a while to run with bwa mem (~12h). With minima
 ### Citing RAILS/Cobbler
 -------------
 
-Thank you for using, developing and promoting this free software.
+Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/stargazers) and for using, developing and promoting this free software.
+
 If you use RAILS or Cobbler for you research, please cite:
 
 <pre>
