@@ -5,7 +5,7 @@
 ![Logo](https://github.com/bcgsc/RAILS/blob/master/rails-logo.png)
 
 # RAILS v1.5.1 and Cobbler v0.6.1
-## Rene L. Warren, 2014-2019
+## Rene L. Warren, 2014-2020
 ## email: rwarren at bcgsc.ca
 
 ### Name
@@ -113,7 +113,7 @@ execute runmeHuman.sh (will take a while to run with bwa mem (~12h). With minima
 ### Citing RAILS/Cobbler
 -------------
 
-Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/stargazers) and for using, developing and promoting this free software.
+Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/stargazers) and for using, developing and promoting this free software!
 
 If you use RAILS or Cobbler for you research, please cite:
 
@@ -256,7 +256,7 @@ RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e
 ### License Preamble
 -------------
 
-RAILS and Cobbler Copyright (c) 2014-2019 British Columbia Cancer Agency Branch.  All rights reserved.
+RAILS and Cobbler Copyright (c) 2014-2020 British Columbia Cancer Agency Branch.  All rights reserved.
 
 RAILS and Cobbler are released under the GNU General Public License v3
 
