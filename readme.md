@@ -122,9 +122,7 @@ Warren RL. 2016. RAILS and Cobbler: Scaffolding and automated finishing
 of draft genomes using long DNA sequences. The Journal of Open Source
 Software. doi: 10.21105/joss.00116
 </pre>
-http://joss.theoj.org/papers/0d20e540649867a13af66f5d90483433
-[![DOI](http://joss.theoj.org/papers/10.21105/joss.00116/status.svg)](https://doi.org/10.21105/joss.00116)
-
+[![link](https://img.shields.io/badge/RAILScobbler-manuscript-brightgreen)](https://doi.org/10.21105/joss.00116)
 
 
 ### Usage
