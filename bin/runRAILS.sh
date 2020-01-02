@@ -1,11 +1,10 @@
 #!/bin/bash
 #RLW 2016
-if [ $# -ne 5 ]; then
-        echo "Usage: $(basename $0) <FASTA assembly .fa> <FASTA long sequences .fa> <anchoring sequence length eg. 250> <min sequence identity 0.95> <path to samtools>"
+if [ $# -ne 6 ]; then
+        echo "Usage: $(basename $0) <FASTA assembly .fa> <FASTA long sequences .fa> <anchoring sequence length eg. 250> <min sequence identity 0.95> <path to samtools> <number of threads>"
         exit 1
 fi
-###Change line below to point to path of bwa executables
-export PATH=/gsc/btl/linuxbrew/bin:$PATH
+
 echo Resolving ambiguous bases -Ns- in $1 assembly using long sequences $2
 echo reformatting file $1
 ### WARNING: MAKE SURE YOUR INPUT FASTA IS ONE SEQUENCE PER LINE, WITH NO LINE BREAKS!
@@ -17,7 +16,7 @@ echo Building sequence database index out of your $1-formatted.fa assembly conti
 bwa index $1-formatted.fa
 echo Aligning long sequences $2-formatted.fa to your contigs..
 ### YOU MAY CONSIDER: SETTING THE MORE STRINGENT bwa mem -x intractg OPTION AND ADJUSTING -t to higher values for speed
-bwa mem -a -t4 $1-formatted.fa $2-formatted.fa | samtools view -Sb - > $2_vs_$1_gapfilling.bam
+bwa mem -a -t $6 $1-formatted.fa $2-formatted.fa | samtools view -Sb - > $2_vs_$1_gapfilling.bam
 echo Scaffolding $1-formatted.fa using $2-formatted.fa and filling gaps with sequences in $2-formatted.fa
 echo $2-formatted.fa > $2-formatted.fof
 echo $2_vs_$1_gapfilling.bam > $2_vs_$1_gapfilling.fof
@@ -30,7 +29,7 @@ echo Building sequence database index out of your $2_vs_$1_$3_$4_gapsFill-format
 bwa index $2_vs_$1_$3_$4_gapsFill-formatted.fa
 echo Aligning long sequences $2-formatted.fa to your contigs..
 ### YOU MAY CONSIDER: SETTING THE MORE STRINGENT bwa mem -x intractg OPTION AND ADJUSTING -t to higher values for speed
-bwa mem -a -t4 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | samtools view -Sb - > $2_vs_$1_scaffolding.bam
+bwa mem -a -t $6 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | samtools view -Sb - > $2_vs_$1_scaffolding.bam
 echo Scaffolding $2_vs_$1_$3_$4_gapsFill-formatted.fa using $2-formatted.fa and filling new gaps with sequences in $2-formatted.fa
 echo $2-formatted.fa > $2-formatted.fof
 echo $2_vs_$1_scaffolding.bam > $2_vs_$1_scaffolding.fof

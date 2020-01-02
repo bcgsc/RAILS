@@ -62,6 +62,8 @@ Improved documentation, minor fixes, support for minimap2 (see runRAILSminimap.s
 RAILS and Cobbler are implemented in PERL and run on any OS where PERL is installed.
 Both tools require samtools (tested with v1.8) to read sequence alignment bamfiles. 
 The runRAILS.sh pipeline requires bwa (see Dependencies below for tested version).
+The runRAILSminimap.sh and runRAILSminimapSTREAM.sh pipelines require minimap2.
+Please make sure these tools are in your PATH before running the above pipelines.
 
 
 ### Community guidelines:
