@@ -1,6 +1,7 @@
 [![Release](https://img.shields.io/github/release/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/releases)
 [![Downloads](https://img.shields.io/github/downloads/bcgsc/RAILS/total?logo=github)](https://github.com/bcgsc/RAILS/releases/download/v1.5.1/rails_v1-5-1.tar.gz)
 [![Issues](https://img.shields.io/github/issues/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/issues)
+[![link](https://img.shields.io/badge/RAILScobbler-manuscript-brightgreen)](https://doi.org/10.21105/joss.00116)
 Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/stargazers)
 
 ![Logo](https://github.com/bcgsc/RAILS/blob/master/rails-logo.png)
