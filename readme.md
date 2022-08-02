@@ -84,14 +84,19 @@ gunzip rails_v1-5-1.tar.gz
 tar -xvf rails_v1-5-1.tar
 </pre>
 
+Pleasure ensure that both cobbler.pl and RAILS are in your PATH.
+
 Alternatively, individual tools are available for download/cloning within the github repository
 
 
 ### Dependencies
 -------------
 
-Make sure you have installed bwa (Version: 0.7.15-r1140) or minimap2 (2.15-r905) and that they are in your path.
-Make sure you have installed samtools (Version: 1.8) and that it is in your path.
+Make sure you have installed bwa (Version: 0.7.15-r1140) or minimap2 (2.15-r905) and that they are in your PATH.
+Make sure you have installed samtools (Version: 1.8) and that it is in your PATH.
+
+Other versions of bwa, minimap2 & samtools may or may not be compatible and they have not been tested. Users may choose to use other versions than the ones specified here, at they see fit, but are expected to thoroughly test the behavior on their own.
+
 Compatible tools may be used, but have not been tested fully (eg. sambamba)
 
 
@@ -197,6 +202,8 @@ RAILS process:
 In RAILS, the process is similar as for Cobbler, except that the draft assembly is not broken up at Ns, since the goal is to merge distinct sequences into larger ones.  Long sequences are aligned to the draft assembly sequences, orienting and ordering sequences and simulateneously filling the gaps between them, using DNA bases from the long sequences.
 
 Scaffolding in RAILS is done using the LINKS scaffolder code (Warren et al. 2015), the unpublished scaffolding engine in the widely-used SSAKE assembler (Warren et al. 2007), and foundation of the SSPACE-LongRead scaffolder (Boetzer and Pirovano, 2014).
+
+The grace (-g) parameter may be used to set the MAXIMUM length of unaligned bases allowed at the end of each (long) sequencing read alignment to the draft genome assembly. For example, setting -g 250 tells cobbler/RAILS to consider a sequencing read with a soft-clip of up to 250 bp in 5' or 3' 
 
 Output: For both Cobbler and RAILS, a summary of the gaps closed and their lengths is provided (.tsv) as a text file.
 A fasta file (.fa) of the finished and/or scaffolded draft is generated for both along with a log file reporting basic success statistics.

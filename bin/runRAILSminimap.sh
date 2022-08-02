@@ -36,7 +36,7 @@ echo Gap-filling $1-formatted.fa using $2-formatted.fa
 echo $2-formatted.fa > $2-formatted.fof
 echo $2_vs_$1_gapfilling.bam > $2_vs_$1_gapfilling.fof
 echo Running cobbler.pl -f $1 -s $2_vs_$1_gapfilling.fof -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8 ...
-./cobbler.pl -f $1 -s $2_vs_$1_gapfilling.fof -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
+cobbler.pl -f $1 -s $2_vs_$1_gapfilling.fof -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
 echo Process terminated.
 #--------------------------
 echo RAILS scaffolding $1.gapsFill.fa sequences and gap-filling using long seqs $2 -- anchoring sequence threshold $3 bp 
@@ -64,6 +64,6 @@ echo Scaffolding $2_vs_$1_$3_$4_gapsFill-formatted.fa using $2-formatted.fa and 
 echo $2-formatted.fa > $2-formatted.fof
 echo $2_vs_$1_scaffolding.bam > $2_vs_$1_scaffolding.fof
 echo Running RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s $2_vs_$1_scaffolding.fof -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8 ...
-./RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s $2_vs_$1_scaffolding.fof -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
+RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s $2_vs_$1_scaffolding.fof -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
 #--------------------------
 echo RAILS process terminated.

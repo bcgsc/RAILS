@@ -23,15 +23,15 @@ echo Aligning and Cobbler gap-filling with long sequences $2-formatted.fa..
 
 if [ $7 == 'ont' ]; then
    echo Running minimap2 with preset map-ont
-   minimap2 -x map-ont -I50g -N 10 -a -t $9 $1-formatted.fa $2-formatted.fa | ./cobbler.pl -f $1 -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
+   minimap2 -x map-ont -I50g -N 10 -a -t $9 $1-formatted.fa $2-formatted.fa | cobbler.pl -f $1 -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
 
 elif [ $7 == 'pacbio' ]; then
    echo Running minimap2 with preset map-pb
-   minimap2 -x map-pb -I50g -N 10 -a -t $9 $1-formatted.fa $2-formatted.fa | ./cobbler.pl -f $1 -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
+   minimap2 -x map-pb -I50g -N 10 -a -t $9 $1-formatted.fa $2-formatted.fa | cobbler.pl -f $1 -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
 
 else
    echo Running minimap2 with no preset
-   minimap2 -I50g -N 10 -a -t $9 $1-formatted.fa $2-formatted.fa | ./cobbler.pl -f $1 -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
+   minimap2 -I50g -N 10 -a -t $9 $1-formatted.fa $2-formatted.fa | cobbler.pl -f $1 -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $8
 
 fi
 
@@ -47,15 +47,15 @@ echo long sequences $2-formatted.fa alignments to your contigs..RAILS scaffoldin
 
 if [ $7 == 'ont' ]; then
    echo Running minimap2 with preset map-ont
-   minimap2 -x map-ont -I50g -N 10 -a -t $9 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | ./RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
+   minimap2 -x map-ont -I50g -N 10 -a -t $9 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
 
 elif [ $7 == 'pacbio' ]; then
    echo Running minimap2 with preset map-pb
-   minimap2 -x map-pb -I50g -N 10 -a -t $9 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | ./RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
+   minimap2 -x map-pb -I50g -N 10 -a -t $9 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
 
 else
    echo Running minimap2 with no preset
-   minimap2 -I50g -N 10 -a -t $9 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | ./RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
+   minimap2 -I50g -N 10 -a -t $9 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s stream -l $6 -g $5 -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $8
 
 fi
 

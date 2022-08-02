@@ -20,7 +20,7 @@ bwa mem -a -t $6 $1-formatted.fa $2-formatted.fa | samtools view -Sb - > $2_vs_$
 echo Scaffolding $1-formatted.fa using $2-formatted.fa and filling gaps with sequences in $2-formatted.fa
 echo $2-formatted.fa > $2-formatted.fof
 echo $2_vs_$1_gapfilling.bam > $2_vs_$1_gapfilling.fof
-./cobbler.pl -f $1 -s $2_vs_$1_gapfilling.fof -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $5
+cobbler.pl -f $1 -s $2_vs_$1_gapfilling.fof -d $3 -i $4 -b $2_vs_$1_$3_$4_gapsFill -q $2-formatted.fof -p $5
 echo Process terminated.
 echo RAILS scaffolding $1.gapsFill.fa sequences using long seqs $2 -- anchoring sequence threshold $3 bp 
 echo reformatting file $1.gapsFill.fa
@@ -33,5 +33,5 @@ bwa mem -a -t $6 $2_vs_$1_$3_$4_gapsFill-formatted.fa $2-formatted.fa | samtools
 echo Scaffolding $2_vs_$1_$3_$4_gapsFill-formatted.fa using $2-formatted.fa and filling new gaps with sequences in $2-formatted.fa
 echo $2-formatted.fa > $2-formatted.fof
 echo $2_vs_$1_scaffolding.bam > $2_vs_$1_scaffolding.fof
-./RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s $2_vs_$1_scaffolding.fof -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $5
+RAILS -f $2_vs_$1_$3_$4_gapsFill-formatted.fa -s $2_vs_$1_scaffolding.fof -d $3 -i $4 -b $2_vs_$1_$3_$4_rails -q $2-formatted.fof -p $5
 echo RAILS process terminated.
