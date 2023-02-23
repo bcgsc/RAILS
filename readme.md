@@ -9,8 +9,25 @@ Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/RAILS.svg
 # RAILS v1.5.1 and Cobbler v0.6.1
 ## Rene L. Warren, 2014-2023
 
+### Contents
+--------
+1. [Name](#name)
+2. [Description](#des)
+3. [What's new](#new)
+4. [Implementation and requirements](#imp)
+5. [Community guidelines](#guide)
+6. [Installation](#install)
+7. [Dependencies](#dep)
+8. [Test data](#test)
+9. [Citing RAILS/Cobbler](#citing)
+10. [Usage](#usage)
+11. [Algorithm](#algo)
+12. [Runs on human](#runs)
+13. [License preamble](#license)
+--------
 
-### Name
+
+### Name <a name=name></a>
 -------------
 
 <pre>
@@ -19,7 +36,7 @@ RAILS: Radial Assembly Improvement by Long Sequence Scaffolding
 Cobbler: Gap-filling with long sequences
 </pre>
 
-### Description
+### Description <a name=des></a>
 -------------
 
 RAILS and Cobbler are genomics application for scaffolding and automated finishing of genome assemblies with long DNA sequences.
@@ -34,7 +51,7 @@ RAILS is an all-in-one scaffolder and gap-filler. Its process is similar to that
 
 You can test the software by executing "runme.sh" in the test folder. A simulated SARS genome assembly is provided to test the software. 
 
-### What's new in v1.5.1
+### What's new in v1.5.1 <a name=new></a>
 
 Remove requirement on samtools when running in "stream" mode
 
@@ -58,7 +75,7 @@ Improved documentation, minor fixes, support for minimap2 (see runRAILSminimap.s
 5. bug fixes (-list.tsv (cobbler) reported some instances of gap-fill regions not fixed in the assembly). cobbler gap-fill table now lists #supporting reads for each gap filled
 
 
-### Implementation and requirements
+### Implementation and requirements <a name=imp></a>
 -------------
 
 RAILS and Cobbler are implemented in PERL and run on any OS where PERL is installed.
@@ -68,13 +85,13 @@ The runRAILSminimap.sh and runRAILSminimapSTREAM.sh pipelines require minimap2.
 Please make sure these tools are in your PATH before running the above pipelines.
 
 
-### Community guidelines:
+### Community guidelines <a name=guide></a>
 -------------
 
 I encourage the community to contribute to the development of this software, by providing suggestions for improving the code and/or directly contributing to the open source code for these tools. Users and developers may report software issues, bug fix requests, comments, etc, at <https://github.com/warrenlr/RAILS>
 
 
-### Install
+### Installation <a name=install></a>
 -------------
 
 Download the tar ball, gunzip and extract the files on your system using:
@@ -89,7 +106,7 @@ Pleasure ensure that both cobbler.pl and RAILS are in your PATH.
 Alternatively, individual tools are available for download/cloning within the github repository
 
 
-### Dependencies
+### Dependencies <a name=dep></a>
 -------------
 
 Make sure you have installed bwa (Version: 0.7.15-r1140) or minimap2 (2.15-r905) and that they are in your PATH.
@@ -100,7 +117,7 @@ Other versions of bwa, minimap2 & samtools may or may not be compatible and they
 Compatible tools may be used, but have not been tested fully (eg. sambamba)
 
 
-### Test data
+### Test data <a name=test></a>
 -------------
 
 <pre>
@@ -119,7 +136,7 @@ execute runmeHuman.sh (will take a while to run with bwa mem (~12h). With minima
 </pre>
 
 
-### Citing RAILS/Cobbler
+### Citing RAILS/Cobbler <a name=citing></a>
 -------------
 
 Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/RAILS.svg)](https://github.com/bcgsc/RAILS/stargazers) and for using, developing and promoting this free software!
@@ -134,7 +151,7 @@ Software. doi: 10.21105/joss.00116
 [![link](https://img.shields.io/badge/RAILScobbler-manuscript-brightgreen)](https://doi.org/10.21105/joss.00116)
 
 
-### Usage
+### Usage <a name=usage></a>
 -------------
 
 <pre>
@@ -185,7 +202,7 @@ IMPORTANT: the order of files in -q and -s MUST match!
 
 </pre>
 
-### How it works
+### Algorithm <a name=algo></a>
 -------------
 
 The pipeline is detailed in the provided script runRAILS.sh. PLEASE ensure the draft assembly is FASTA-formatted with one sequence per line (NO LINE BREAKS)
@@ -217,7 +234,7 @@ Warren RL, Sutton GG, Jones SJM, Holt RA.  2007.  Assembling millions of short D
 </pre>
 
 
-### Runs on the human genome
+### Runs on human <a name=runs></a>
 -------------
 
 On a human HG004 ABySS draft assembly, cobbler filled over 65% of the gaps using 1, 2.5, 5, 15 kb long DNA sequences simulated from the human genome reference. The Pearson correlation between the predicted gap sizes and the size of patched gaps is R=0.8150
@@ -262,7 +279,7 @@ Cobbler | 65,905 |        145 |   161 |   5,312,196 |     5,658,133 |       26.6
 RAILS | 64,210 |        113 |   125 |   6,935,685 |     7,266,542 |       32.14e6 |       2.836e9
 
 
-### License Preamble
+### License preamble <a name=license></a>
 -------------
 
 RAILS and Cobbler Copyright (c) 2014-2023 British Columbia Cancer Agency Branch.  All rights reserved.
