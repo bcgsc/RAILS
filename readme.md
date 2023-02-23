@@ -8,7 +8,7 @@ Thank you for your [![Stars](https://img.shields.io/github/stars/bcgsc/RAILS.svg
 
 # RAILS v1.5.1 and Cobbler v0.6.1
 ## Rene L. Warren, 2014-2023
-## email: rwarren at bcgsc.ca
+
 
 ### Name
 -------------
